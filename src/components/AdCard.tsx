@@ -1,4 +1,4 @@
-import { Play } from 'lucide-react';
+import { Play, MoreHorizontal } from 'lucide-react';
 import { AdData } from '@/types/ad.types';
 import { determineCardType, getImageUrl } from '@/utils/adUtils';
 import { useState } from 'react';
@@ -17,83 +17,88 @@ export default function AdCard({ ad }: AdCardProps) {
   };
 
   return (
-    <div className="ad-card group relative aspect-square overflow-hidden rounded-2xl bg-card shadow-md transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
-      {/* Image Container */}
-      <div className="relative w-full h-full">
+    <div className="ad-card">
+      {/* Header with Brand Info */}
+      <div className="ad-card-header">
+        <div className="brand-info">
+          {ad.adData.profilePicUrl ? (
+            <img 
+              src={ad.adData.profilePicUrl} 
+              alt={ad.adData.pageName}
+              className="brand-logo"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+              }}
+            />
+          ) : (
+            <div className="brand-logo bg-muted flex items-center justify-center">
+              <span className="text-xs font-bold text-muted-foreground">
+                {ad.adData.pageName?.charAt(0) || 'A'}
+              </span>
+            </div>
+          )}
+          <div>
+            <h4 className="brand-name">{ad.adData.pageName}</h4>
+            <span className="sponsored-label">Sponsorowane</span>
+          </div>
+        </div>
+        <button className="text-muted-foreground hover:text-foreground transition-colors">
+          <MoreHorizontal size={20} />
+        </button>
+      </div>
+
+      {/* Ad Text Content */}
+      {ad.adData.body && (
+        <div className="ad-content">
+          <p className="ad-text">{ad.adData.body}</p>
+        </div>
+      )}
+
+      {/* Main Image/Video */}
+      <div className="ad-image-container">
         {!imageError ? (
           <img
             src={imageUrl}
             alt={`${ad.adData.pageName} - ${ad.adType} Ad`}
-            className="w-full h-full object-cover"
+            className="ad-main-image"
             onError={handleImageError}
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full bg-muted flex items-center justify-center">
-            <span className="text-muted-foreground text-sm">Image unavailable</span>
+          <div className="ad-main-image bg-muted flex items-center justify-center">
+            <span className="text-muted-foreground text-sm">Obraz niedostępny</span>
           </div>
         )}
         
         {/* Video Overlay */}
         {cardType === 'VIDEO' && (
-          <div className="absolute inset-0 bg-black/30 flex items-center justify-center transition-opacity group-hover:bg-black/40">
-            <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center transform transition-transform group-hover:scale-110">
-              <Play className="w-8 h-8 text-foreground ml-1" fill="currentColor" />
-            </div>
+          <div className="video-overlay">
+            <Play size={20} fill="currentColor" className="ml-0.5" />
           </div>
         )}
         
         {/* Carousel Indicators */}
         {cardType === 'CAROUSEL' && ad.adData.cards && ad.adData.cards.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-1.5">
+          <div className="carousel-indicators">
             {ad.adData.cards.map((_, index) => (
-              <div
+              <span
                 key={index}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  index === 0
-                    ? 'bg-white w-6'
-                    : 'bg-white/60 hover:bg-white/80'
-                }`}
+                className={`dot ${index === 0 ? 'active' : ''}`}
               />
             ))}
           </div>
         )}
-        
-        {/* Ad Type Badge */}
-        <div className="absolute top-3 left-3 px-3 py-1 bg-background/90 backdrop-blur-sm rounded-full">
-          <span className="text-xs font-medium text-foreground">
-            {cardType}
+      </div>
+
+      {/* Link Preview Footer */}
+      {ad.adData.linkUrl && (
+        <div className="ad-link-preview">
+          <span className="link-text">
+            {ad.adData.linkUrl.replace(/^https?:\/\//, '').split('/')[0]}
           </span>
         </div>
-        
-        {/* Platform Badge */}
-        {ad.adData.publisherPlatform && (
-          <div className="absolute top-3 right-3 px-3 py-1 bg-background/90 backdrop-blur-sm rounded-full">
-            <span className="text-xs font-medium text-foreground">
-              {ad.adData.publisherPlatform}
-            </span>
-          </div>
-        )}
-      </div>
-      
-      {/* Hover Overlay with Ad Details */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">
-        {ad.adData.title && (
-          <h3 className="text-white font-semibold text-sm mb-1 line-clamp-1">
-            {ad.adData.title}
-          </h3>
-        )}
-        {ad.adData.body && (
-          <p className="text-white/90 text-xs line-clamp-2">
-            {ad.adData.body}
-          </p>
-        )}
-        {ad.adData.ctaText && (
-          <span className="mt-2 inline-block text-xs bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full w-fit">
-            {ad.adData.ctaText}
-          </span>
-        )}
-      </div>
+      )}
     </div>
   );
 }

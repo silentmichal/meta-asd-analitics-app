@@ -48,17 +48,17 @@ export default function StartScreen({ onSubmit }: StartScreenProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-hero p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
-        <div className="bg-card rounded-3xl p-8 md:p-10 shadow-xl backdrop-blur-sm">
+        <div className="bg-card border border-border rounded-xl p-8 md:p-12 shadow-md">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-full mb-6">
-              <Target className="w-10 h-10 text-primary" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-accent/10 rounded-full mb-6">
+              <Target className="w-8 h-8 text-accent" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-3 gradient-text">
+            <h1 className="text-3xl md:text-4xl font-semibold mb-2 text-foreground">
               Analizuj Konkurencję
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-base">
               Pobierz i analizuj reklamy z Facebook Ads Library
             </p>
           </div>

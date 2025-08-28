@@ -56,50 +56,48 @@ export default function Pagination({
   if (totalPages <= 1) return null;
 
   return (
-    <nav className="flex items-center justify-between bg-card rounded-2xl p-4 shadow-md">
+    <nav className="flex items-center justify-center gap-2 py-8">
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="w-10 h-10 border border-border bg-card rounded-lg hover:border-accent hover:text-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+        aria-label="Previous page"
+      >
+        <ChevronLeft className="w-4 h-4" />
+      </button>
+      
       <div className="flex items-center gap-2">
-        <button
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="p-2 rounded-lg hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          aria-label="Previous page"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        
-        <div className="flex items-center gap-1">
-          {getPageNumbers().map((page, index) => (
-            <button
-              key={index}
-              onClick={() => typeof page === 'number' && onPageChange(page)}
-              disabled={page === '...'}
-              className={`
-                min-w-[40px] h-10 px-3 rounded-lg font-medium transition-all
-                ${page === currentPage
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : page === '...'
-                  ? 'cursor-default text-muted-foreground'
-                  : 'hover:bg-muted'
-                }
-              `}
-            >
-              {page}
-            </button>
-          ))}
-        </div>
-        
-        <button
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="p-2 rounded-lg hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          aria-label="Next page"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
+        {getPageNumbers().map((page, index) => (
+          <button
+            key={index}
+            onClick={() => typeof page === 'number' && onPageChange(page)}
+            disabled={page === '...'}
+            className={`
+              min-w-[40px] h-10 border rounded-lg font-medium transition-all
+              ${page === currentPage
+                ? 'bg-accent border-accent text-accent-foreground'
+                : page === '...'
+                ? 'cursor-default text-muted-foreground border-transparent'
+                : 'border-border bg-card hover:border-accent hover:text-accent'
+              }
+            `}
+          >
+            {page}
+          </button>
+        ))}
       </div>
       
-      <div className="hidden sm:block text-sm text-muted-foreground">
-        Pokazuje {startItem}-{endItem} z {totalItems} reklam
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="w-10 h-10 border border-border bg-card rounded-lg hover:border-accent hover:text-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+        aria-label="Next page"
+      >
+        <ChevronRight className="w-4 h-4" />
+      </button>
+      
+      <div className="hidden sm:block ml-4 text-sm text-muted-foreground">
+        {startItem}-{endItem} z {totalItems}
       </div>
     </nav>
   );
