@@ -1,14 +1,75 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useEffect } from 'react';
+import StartScreen from '@/components/StartScreen';
+import LoadingScreen from '@/components/LoadingScreen';
+import Dashboard from '@/components/Dashboard';
+import { AdData, StoredAnalysis } from '@/types/ad.types';
+import { generateMockData } from '@/utils/mockData';
+import { saveAnalysis, loadAnalysis } from '@/utils/localStorage';
+import { toast } from 'sonner';
+
+type AppState = 'start' | 'loading' | 'dashboard';
 
 const Index = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
-  );
+  const [appState, setAppState] = useState<AppState>('start');
+  const [ads, setAds] = useState<AdData[]>([]);
+  const [pageName, setPageName] = useState('');
+  const [pageId, setPageId] = useState('');
+
+  useEffect(() => {
+    // Check if there's stored analysis on mount
+    const stored = loadAnalysis();
+    if (stored && stored.ads.length > 0) {
+      setAds(stored.ads);
+      setPageName(stored.pageName);
+      setPageId(stored.pageId);
+      setAppState('dashboard');
+      toast.success('Przywrócono poprzednią analizę');
+    }
+  }, []);
+
+  const handlePageIdSubmit = async (submittedPageId: string) => {
+    setPageId(submittedPageId);
+    setAppState('loading');
+    
+    // Simulate API call with mock data
+    setTimeout(() => {
+      const mockData = generateMockData(submittedPageId);
+      const mockPageName = 'Nike Poland'; // In real app, this would come from API
+      
+      const analysis: StoredAnalysis = {
+        timestamp: new Date().toISOString(),
+        pageName: mockPageName,
+        pageId: submittedPageId,
+        totalAds: mockData.length,
+        ads: mockData
+      };
+      
+      // Save to localStorage
+      saveAnalysis(analysis);
+      
+      // Update state
+      setAds(mockData);
+      setPageName(mockPageName);
+      setAppState('dashboard');
+      
+      toast.success(`Pobrano ${mockData.length} reklam`);
+    }, 2000); // Simulate loading time
+  };
+
+  const handleBack = () => {
+    setAppState('start');
+  };
+
+  switch (appState) {
+    case 'start':
+      return <StartScreen onSubmit={handlePageIdSubmit} />;
+    case 'loading':
+      return <LoadingScreen />;
+    case 'dashboard':
+      return <Dashboard ads={ads} pageName={pageName} onBack={handleBack} />;
+    default:
+      return <StartScreen onSubmit={handlePageIdSubmit} />;
+  }
 };
 
 export default Index;
