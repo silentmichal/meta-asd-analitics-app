@@ -29,14 +29,35 @@ export async function fetchAdsFromWebhook(pageId: string): Promise<{
     }
 
     const data = await response.json();
-    console.log('Webhook response:', data);
+    console.log('Webhook response structure:', typeof data, data);
     
-    // Extract ads from the response structure
+    // Handle direct object with details property
+    if (data && data.details && Array.isArray(data.details)) {
+      console.log('Found details array with', data.details.length, 'items');
+      
+      // Filter successful ads only
+      const ads = data.details.filter((item: any) => item.success === true);
+      console.log('Filtered to', ads.length, 'successful ads');
+      
+      // Get page name from first successful ad
+      const pageName = ads.length > 0 && ads[0]?.adData?.pageName 
+        ? ads[0].adData.pageName 
+        : 'Unknown Page';
+      
+      console.log('Extracted page name:', pageName);
+      
+      return {
+        ads,
+        pageName
+      };
+    }
+    
+    // Also handle array format (backwards compatibility)
     if (Array.isArray(data) && data[0]?.details) {
+      console.log('Found array format with details');
       const ads = data[0].details.filter((item: any) => item.success === true);
       
-      // Get page name from first ad
-      const pageName = ads.length > 0 && ads[0].adData?.pageName 
+      const pageName = ads.length > 0 && ads[0]?.adData?.pageName 
         ? ads[0].adData.pageName 
         : 'Unknown Page';
       
@@ -46,7 +67,7 @@ export async function fetchAdsFromWebhook(pageId: string): Promise<{
       };
     }
     
-    // Fallback if structure is different
+    console.warn('Unexpected data structure:', data);
     return {
       ads: [],
       pageName: 'Unknown Page'
