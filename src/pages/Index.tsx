@@ -3,7 +3,7 @@ import StartScreen from '@/components/StartScreen';
 import LoadingScreen from '@/components/LoadingScreen';
 import Dashboard from '@/components/Dashboard';
 import { AdData, StoredAnalysis } from '@/types/ad.types';
-import { generateMockData } from '@/utils/mockData';
+import { fetchAdsFromWebhook } from '@/services/adService';
 import { saveAnalysis, loadAnalysis } from '@/utils/localStorage';
 import { toast } from 'sonner';
 
@@ -31,29 +31,38 @@ const Index = () => {
     setPageId(submittedPageId);
     setAppState('loading');
     
-    // Simulate API call with mock data
-    setTimeout(() => {
-      const mockData = generateMockData(submittedPageId);
-      const mockPageName = 'Nike Poland'; // In real app, this would come from API
+    try {
+      // Fetch real data from webhook
+      const { ads: fetchedAds, pageName: fetchedPageName } = await fetchAdsFromWebhook(submittedPageId);
+      
+      if (fetchedAds.length === 0) {
+        toast.error('Nie znaleziono żadnych reklam dla tej strony');
+        setAppState('start');
+        return;
+      }
       
       const analysis: StoredAnalysis = {
         timestamp: new Date().toISOString(),
-        pageName: mockPageName,
+        pageName: fetchedPageName,
         pageId: submittedPageId,
-        totalAds: mockData.length,
-        ads: mockData
+        totalAds: fetchedAds.length,
+        ads: fetchedAds
       };
       
       // Save to localStorage
       saveAnalysis(analysis);
       
       // Update state
-      setAds(mockData);
-      setPageName(mockPageName);
+      setAds(fetchedAds);
+      setPageName(fetchedPageName);
       setAppState('dashboard');
       
-      toast.success(`Pobrano ${mockData.length} reklam`);
-    }, 2000); // Simulate loading time
+      toast.success(`Pobrano ${fetchedAds.length} reklam z ${fetchedPageName}`);
+    } catch (error) {
+      console.error('Error fetching ads:', error);
+      toast.error('Wystąpił błąd podczas pobierania danych. Spróbuj ponownie.');
+      setAppState('start');
+    }
   };
 
   const handleBack = () => {
