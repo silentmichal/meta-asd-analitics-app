@@ -5,16 +5,18 @@ interface AdCardHeaderProps {
   profilePicUrl?: string | null;
   platform: string;
 
-  // NOWE – opcjonalne meta do wyświetlenia w 2. linii
+  // meta do 2. linii (opcjonalne; przekazywane z widoku przez ad.basic?.json)
   startDate?: string;
   stopDate?: string | null;
-  platforms?: string[]; // np. ["facebook","instagram","messenger"]
+  platforms?: string[]; // ["facebook","instagram","messenger"]
 }
 
 function formatDate(d?: string | null) {
   if (!d) return '';
-  // oczekiwany format: "YYYY-MM-DD"
-  const [y, m, day] = d.split('-').map(Number);
+  // oczekiwany format "YYYY-MM-DD"
+  const parts = d.split('-');
+  if (parts.length !== 3) return d;
+  const [y, m, day] = parts.map((x) => Number(x));
   if (!y || !m || !day) return d;
   const dd = String(day).padStart(2, '0');
   const mm = String(m).padStart(2, '0');
@@ -38,13 +40,9 @@ export default function AdCardHeader({
   stopDate,
   platforms
 }: AdCardHeaderProps) {
-  const datesText =
-    startDate ? `${formatDate(startDate)}${stopDate ? ` – ${formatDate(stopDate)}` : ''}` : '';
-
+  const datesText = startDate ? `${formatDate(startDate)}${stopDate ? ` – ${formatDate(stopDate)}` : ''}` : '';
   const platformsText =
-    Array.isArray(platforms) && platforms.length
-      ? platforms.map(prettyPlatform).join(' · ')
-      : '';
+    Array.isArray(platforms) && platforms.length ? platforms.map(prettyPlatform).join(' · ') : '';
 
   return (
     <div className="flex items-start justify-between p-3 sm:p-4">
@@ -71,14 +69,14 @@ export default function AdCardHeader({
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-sm truncate">{pageName}</h3>
 
-          {/* Linia 1 – jak było */}
+          {/* linia 1 – bez zmian */}
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span>Sponsorowane</span>
             <span>·</span>
             <span>{formatPlatform(platform)}</span>
           </div>
 
-          {/* Linia 2 – daty i/lub platformy (opcjonalnie) */}
+          {/* linia 2 – daty i/lub platformy */}
           {(datesText || platformsText) && (
             <div className="mt-0.5 text-xs text-muted-foreground">
               {datesText && <span>{datesText}</span>}
