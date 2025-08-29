@@ -1,4 +1,5 @@
-import { formatPlatform, formatDateRange } from '@/utils/adUtils';
+import { formatPlatform, formatDateRange, getPlatformIconName } from '@/utils/adUtils';
+import { Facebook, Instagram, MessageCircle, Globe } from 'lucide-react';
 
 interface AdCardHeaderProps {
   pageName: string;
@@ -9,10 +10,18 @@ interface AdCardHeaderProps {
   endDate?: string;
 }
 
+const platformIcons: { [key: string]: any } = {
+  'Facebook': Facebook,
+  'Instagram': Instagram,
+  'MessageCircle': MessageCircle,
+  'Globe': Globe
+};
+
 export default function AdCardHeader({ 
   pageName, 
   profilePicUrl, 
   platform, 
+  platforms,
   startDate,
   endDate 
 }: AdCardHeaderProps) {
@@ -39,11 +48,26 @@ export default function AdCardHeader({
         </div>
         
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm truncate">{pageName}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold text-sm truncate">{pageName}</h3>
+            {platforms && platforms.length > 0 && (
+              <div className="flex items-center gap-1">
+                {platforms.map((platform, index) => {
+                  const iconName = getPlatformIconName(platform);
+                  const Icon = platformIcons[iconName];
+                  return Icon ? (
+                    <Icon 
+                      key={index} 
+                      className="w-3.5 h-3.5 text-muted-foreground" 
+                      title={platform}
+                    />
+                  ) : null;
+                })}
+              </div>
+            )}
+          </div>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span>Sponsorowane</span>
-            <span>·</span>
-            <span>{formatPlatform(platform)}</span>
           </div>
           {startDate && (
             <div className="text-xs text-muted-foreground mt-0.5">

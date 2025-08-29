@@ -1,22 +1,14 @@
-import { extractDomain, getPlatformIconName } from '@/utils/adUtils';
-import { ExternalLink, Facebook, Instagram, MessageCircle, Globe } from 'lucide-react';
+import { extractDomain } from '@/utils/adUtils';
+import { ExternalLink } from 'lucide-react';
 
 interface AdCardFooterProps {
   linkUrl?: string;
   ctaText?: string;
   title?: string;
   linkDescription?: string;
-  platforms?: string[];
 }
 
-const platformIcons: { [key: string]: any } = {
-  'Facebook': Facebook,
-  'Instagram': Instagram,
-  'MessageCircle': MessageCircle,
-  'Globe': Globe
-};
-
-export default function AdCardFooter({ linkUrl, ctaText, title, linkDescription, platforms }: AdCardFooterProps) {
+export default function AdCardFooter({ linkUrl, ctaText, title, linkDescription }: AdCardFooterProps) {
   if (!linkUrl) return null;
 
   const domain = extractDomain(linkUrl);
@@ -50,21 +42,6 @@ export default function AdCardFooter({ linkUrl, ctaText, title, linkDescription,
                 <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
                   {linkDescription}
                 </p>
-              )}
-              {platforms && platforms.length > 0 && (
-                <div className="flex items-center gap-1.5 mt-2">
-                  {platforms.map((platform, index) => {
-                    const iconName = getPlatformIconName(platform);
-                    const Icon = platformIcons[iconName];
-                    return Icon ? (
-                      <Icon 
-                        key={index} 
-                        className="w-3.5 h-3.5 text-muted-foreground" 
-                        title={platform}
-                      />
-                    ) : null;
-                  })}
-                </div>
               )}
             </div>
 

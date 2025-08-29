@@ -116,7 +116,6 @@ export default function AdCard({ ad }: AdCardProps) {
               ? adData.cards[Math.min(selectedVersion, adData.cards.length - 1)]?.linkDescription
               : (adData.linkDescription || adData.cards?.[0]?.linkDescription || undefined)
           }
-          platforms={ad.basic?.json.publisher_platforms}
         />
       </div>
 
