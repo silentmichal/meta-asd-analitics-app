@@ -40,7 +40,7 @@ export default function AdCardCarousel({ cards, typeIcon }: AdCardCarouselProps)
             className="w-full h-full object-cover"
             onError={(e) => {
               (e.target as HTMLImageElement).src = '/placeholder.svg';
-            })}
+            }}
           />
         )}
 
