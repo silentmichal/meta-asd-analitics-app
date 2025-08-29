@@ -19,13 +19,13 @@ export default function AdCardCarousel({ cards, typeIcon }: AdCardCarouselProps)
 
   return (
     <div className="relative bg-muted overflow-hidden">
+      {/* Media tylko – bez sekcji tekstowych */}
       {currentCard.videoUrls && (currentCard.videoUrls.hd || currentCard.videoUrls.sd) ? (
         <video
           src={currentCard.videoUrls.hd || currentCard.videoUrls.sd || ''}
           poster={currentCard.previewImageUrl || currentCard.imageUrl}
           controls
           className="w-full h-auto object-contain"
-          playsInline
         />
       ) : (
         <img

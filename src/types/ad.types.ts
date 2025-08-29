@@ -18,7 +18,7 @@ export interface AdCard {
   previewImageUrl?: string | null;
   linkUrl: string;
   ctaText: string;
-  linkDescription?: string;
+  linkDescription?: string; // NEW
 }
 
 export interface AdBasicInfo {
@@ -34,7 +34,7 @@ export interface AdBasicInfo {
     ad_creative_link_captions?: string[];
     publisher_platforms: string[];
     ad_delivery_start_time: string;
-    ad_delivery_stop_time?: string | null;
+    ad_delivery_stop_time?: string;
   };
   pairedItem?: {
     item: number;
@@ -54,7 +54,7 @@ export interface AdData {
     title?: string;
     ctaText?: string;
     linkUrl?: string;
-    linkDescription?: string;
+    linkDescription?: string; // NEW
     publisherPlatform: string;
     profilePicUrl?: string;
     image?: AdImage;
@@ -62,7 +62,7 @@ export interface AdData {
     videoUrls?: VideoUrls;
     cards?: AdCard[];
   };
-  basic?: AdBasicInfo;
+  basic?: AdBasicInfo; // NEW - contains platform and date information
 }
 
 export interface StoredAnalysis {

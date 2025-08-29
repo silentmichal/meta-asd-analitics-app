@@ -14,9 +14,10 @@ export default function AdCardMedia({ card, typeIcon }: AdCardMediaProps) {
 
   return (
     <div className="relative bg-muted overflow-hidden">
+      {/* MEDIA */}
       {isVideo && showVideo ? (
         <video
-          key={videoSrc}
+          key={videoSrc}                 // resetuje odtwarzacz przy zmianie karty
           src={videoSrc}
           poster={card.previewImageUrl || card.imageUrl}
           controls
@@ -34,6 +35,8 @@ export default function AdCardMedia({ card, typeIcon }: AdCardMediaProps) {
               (e.target as HTMLImageElement).src = '/placeholder.svg';
             }}
           />
+
+          {/* Przyciski/overlays */}
           {isVideo && (
             <button
               type="button"
@@ -49,6 +52,7 @@ export default function AdCardMedia({ card, typeIcon }: AdCardMediaProps) {
         </div>
       )}
 
+      {/* Badge typu (jeśli chcesz, możesz wyłączyć) */}
       {typeIcon && (
         <div className="absolute top-3 right-3 w-6 h-6 bg-background/80 rounded-full flex items-center justify-center">
           {typeIcon}
