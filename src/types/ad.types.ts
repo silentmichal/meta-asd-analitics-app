@@ -9,7 +9,7 @@ export interface VideoUrls {
   hd: string | null;
   sd: string | null;
 }
-Miałeś tylko poprawić widoki, ponieważ logika, typy i akcje zostały poprawione. To ci wkleja, jak ono wygląda, i tylko popraw widoki. 
+
 export interface AdCard {
   title: string;
   body: string | null;
@@ -18,7 +18,7 @@ export interface AdCard {
   previewImageUrl?: string | null;
   linkUrl: string;
   ctaText: string;
-  linkDescription?: string; // NEW
+  linkDescription?: string;
 }
 
 export interface AdData {
@@ -31,7 +31,7 @@ export interface AdData {
     title?: string;
     ctaText?: string;
     linkUrl?: string;
-    linkDescription?: string; // NEW
+    linkDescription?: string;
     publisherPlatform: string;
     profilePicUrl?: string;
     image?: AdImage;
