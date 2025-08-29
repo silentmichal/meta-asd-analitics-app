@@ -93,13 +93,25 @@ export default function AdCard({ ad }: AdCardProps) {
 
         {/* Przekazujemy linkDescription do CTA */}
         <AdCardFooter 
-          linkUrl={adData.linkUrl || adData.cards?.[0]?.linkUrl}
-          ctaText={adData.ctaText || adData.cards?.[0]?.ctaText}
-          title={adData.title || adData.cards?.[0]?.title}
+          linkUrl={
+            adType === 'DCO' && adData.cards 
+              ? adData.cards[Math.min(selectedVersion, adData.cards.length - 1)]?.linkUrl
+              : (adData.linkUrl || adData.cards?.[0]?.linkUrl)
+          }
+          ctaText={
+            adType === 'DCO' && adData.cards
+              ? adData.cards[Math.min(selectedVersion, adData.cards.length - 1)]?.ctaText
+              : (adData.ctaText || adData.cards?.[0]?.ctaText)
+          }
+          title={
+            adType === 'DCO' && adData.cards
+              ? adData.cards[Math.min(selectedVersion, adData.cards.length - 1)]?.title
+              : (adData.title || adData.cards?.[0]?.title)
+          }
           linkDescription={
-            adData.linkDescription ||
-            adData.cards?.[0]?.linkDescription ||
-            undefined
+            adType === 'DCO' && adData.cards
+              ? adData.cards[Math.min(selectedVersion, adData.cards.length - 1)]?.linkDescription
+              : (adData.linkDescription || adData.cards?.[0]?.linkDescription || undefined)
           }
         />
       </div>
