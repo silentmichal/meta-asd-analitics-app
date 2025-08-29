@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { AdData } from '@/types/ad.types';
 import AdCardHeader from './ad/AdCardHeader';
 import AdCardFooter from './ad/AdCardFooter';
 import AdCardCarousel from './ad/AdCardCarousel';
-import AdCardDCO from './ad/AdCardDCO';
+import DcoVersionBar from './ad/AdCardDCO';
 import AdCardMedia from './ad/AdCardMedia';
 import { Play, Images } from 'lucide-react';
 
@@ -12,6 +13,9 @@ interface AdCardProps {
 
 export default function AdCard({ ad }: AdCardProps) {
   const { adType, adData } = ad;
+
+  // DCO – sterowanie wyborem wersji (pasek poniżej karty)
+  const [selectedVersion, setSelectedVersion] = useState(0);
 
   const hasVideo = Boolean(
     adType === 'VIDEO' ||
@@ -23,17 +27,18 @@ export default function AdCard({ ad }: AdCardProps) {
     (adType === 'CAROUSEL' || adType === 'MULTI_IMAGE' || adType === 'DCO')
       ? <Images className="w-3 h-3" />
       : null;
-  
+
+  // Media (bez wymuszania aspektu — naturalna wysokość)
   const renderMedia = () => {
-    if (adType === 'DCO' && adData.cards) {
-      // Wersje i media obsłuży wewnątrz AdCardDCO (media -> wersje pod spodem)
-      return <AdCardDCO cards={adData.cards} />;
+    if (adType === 'DCO' && adData.cards && adData.cards.length > 0) {
+      const current = adData.cards[Math.min(selectedVersion, adData.cards.length - 1)];
+      return <AdCardMedia card={current} typeIcon={typeIcon} />;
     }
-    
+
     if ((adType === 'CAROUSEL' || adType === 'MULTI_IMAGE') && adData.cards) {
       return <AdCardCarousel cards={adData.cards} typeIcon={typeIcon} />;
     }
-    
+
     if (adType === 'VIDEO') {
       const videoCard = adData.cards?.[0] || {
         title: adData.title || '',
@@ -46,7 +51,7 @@ export default function AdCard({ ad }: AdCardProps) {
       };
       return <AdCardMedia card={videoCard} typeIcon={typeIcon} />;
     }
-    
+
     if (adType === 'IMAGE') {
       const imageCard = adData.cards?.[0] || {
         title: adData.title || '',
@@ -57,36 +62,48 @@ export default function AdCard({ ad }: AdCardProps) {
       };
       return <AdCardMedia card={imageCard} typeIcon={typeIcon} />;
     }
-    
+
     return null;
   };
-  
-  return (
-    <div className="fb-ad-card group">
-      <AdCardHeader 
-        pageName={adData.pageName}
-        profilePicUrl={adData.profilePicUrl}
-        platform={adData.publisherPlatform}
-      />
 
-      {/* Główny tekst reklamy (jeśli bez kart) */}
-      {adData.body && !adData.cards && (
-        <div className="px-3 sm:px-4 pb-3">
-          <p className="text-sm whitespace-pre-wrap line-clamp-3">
-            {adData.body}
-          </p>
-        </div>
+  return (
+    <div>
+      {/* KARTA */}
+      <div className="fb-ad-card group">
+        <AdCardHeader 
+          pageName={adData.pageName}
+          profilePicUrl={adData.profilePicUrl}
+          platform={adData.publisherPlatform}
+        />
+
+        {/* Tekst główny (gdy brak kart) */}
+        {adData.body && !adData.cards && (
+          <div className="px-3 sm:px-4 pb-3">
+            <p className="text-sm whitespace-pre-wrap line-clamp-3">
+              {adData.body}
+            </p>
+          </div>
+        )}
+
+        {/* Media (naturalne proporcje) */}
+        {renderMedia()}
+
+        {/* CTA */}
+        <AdCardFooter 
+          linkUrl={adData.linkUrl || adData.cards?.[0]?.linkUrl}
+          ctaText={adData.ctaText || adData.cards?.[0]?.ctaText}
+          title={adData.title || adData.cards?.[0]?.title}
+        />
+      </div>
+
+      {/* PASEK WERSJI – poza kartą */}
+      {adType === 'DCO' && adData.cards && adData.cards.length > 1 && (
+        <DcoVersionBar
+          count={adData.cards.length}
+          selectedIndex={selectedVersion}
+          onSelect={setSelectedVersion}
+        />
       )}
-      
-      {/* Media */}
-      {renderMedia()}
-      
-      {/* Footer / CTA */}
-      <AdCardFooter 
-        linkUrl={adData.linkUrl || adData.cards?.[0]?.linkUrl}
-        ctaText={adData.ctaText || adData.cards?.[0]?.ctaText}
-        title={adData.title || adData.cards?.[0]?.title}
-      />
     </div>
   );
 }
