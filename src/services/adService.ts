@@ -21,22 +21,34 @@ function parseAdData(item: any): AdData | null {
     if (adData.title) adData.title = decodeHtmlEntities(adData.title);
     if (adData.linkDescription) adData.linkDescription = decodeHtmlEntities(adData.linkDescription); // NEW
 
-    // Decode cards
-    if (adData.cards && Array.isArray(adData.cards)) {
-      adData.cards = adData.cards.map((card: any) => ({
-        ...card,
-        title: decodeHtmlEntities(card.title),
-        body: decodeHtmlEntities(card.body),
-        linkDescription: card.linkDescription ? decodeHtmlEntities(card.linkDescription) : card.linkDescription // NEW
-      }));
-    }
+  // Decode cards
+  if (adData.cards && Array.isArray(adData.cards)) {
+    adData.cards = adData.cards.map((card: any) => ({
+      ...card,
+      title: decodeHtmlEntities(card.title),
+      body: decodeHtmlEntities(card.body),
+      linkDescription: card.linkDescription ? decodeHtmlEntities(card.linkDescription) : card.linkDescription // NEW
+    }));
+  }
 
-    return {
-      success: adInfo.success,
-      adType: adInfo.adType,
-      adData,
-      basic: item.basic // NEW - pass through basic field with platform and date info
-    };
+  // Convert MULTI_IMAGE images to cards format
+  if (adInfo.adType === 'MULTI_IMAGE' && adData.images && Array.isArray(adData.images)) {
+    adData.cards = adData.images.map((image: any) => ({
+      title: adData.title || '',
+      body: null,
+      imageUrl: image.resized_url || image.original_url,
+      linkUrl: adData.linkUrl || '',
+      ctaText: adData.ctaText || '',
+      linkDescription: adData.linkDescription || null
+    }));
+  }
+
+  return {
+    success: adInfo.success,
+    adType: adInfo.adType,
+    adData,
+    basic: item.basic // NEW - pass through basic field with platform and date info
+  };
   } catch (error) {
     console.error('Error parsing ad data:', error);
     return null;

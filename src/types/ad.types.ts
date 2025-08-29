@@ -58,6 +58,7 @@ export interface AdData {
     publisherPlatform: string;
     profilePicUrl?: string;
     image?: AdImage;
+    images?: AdImage[]; // NEW - for MULTI_IMAGE type
     previewImageUrl?: string;
     videoUrls?: VideoUrls;
     cards?: AdCard[];
