@@ -34,7 +34,8 @@ function parseAdData(item: any): AdData | null {
     return {
       success: adInfo.success,
       adType: adInfo.adType,
-      adData
+      adData,
+      basic: item.basic // NEW - pass through basic field with platform and date info
     };
   } catch (error) {
     console.error('Error parsing ad data:', error);
