@@ -21,6 +21,29 @@ export interface AdCard {
   linkDescription?: string;
 }
 
+export interface AdBasicInfo {
+  json: {
+    id: string;
+    ad_snapshot_url: string;
+    ad_creation_time: string;
+    page_id: string;
+    page_name: string;
+    ad_creative_bodies?: string[];
+    ad_creative_link_titles?: string[];
+    ad_creative_link_descriptions?: string[];
+    ad_creative_link_captions?: string[];
+    publisher_platforms: string[];
+    ad_delivery_start_time: string;
+    ad_delivery_stop_time?: string | null;
+  };
+  pairedItem?: {
+    item: number;
+    sourceOverwrite?: {
+      previousNode: string;
+    };
+  };
+}
+
 export interface AdData {
   success: boolean;
   adType: AdType;
@@ -39,6 +62,7 @@ export interface AdData {
     videoUrls?: VideoUrls;
     cards?: AdCard[];
   };
+  basic?: AdBasicInfo;
 }
 
 export interface StoredAnalysis {
