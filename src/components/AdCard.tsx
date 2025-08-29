@@ -14,7 +14,7 @@ interface AdCardProps {
 export default function AdCard({ ad }: AdCardProps) {
   const { adType, adData } = ad;
 
-  // DCO – sterowanie wyborem wersji (pasek poniżej karty)
+  // DCO – pasek wersji pod kartą
   const [selectedVersion, setSelectedVersion] = useState(0);
 
   const hasVideo = Boolean(
@@ -28,7 +28,21 @@ export default function AdCard({ ad }: AdCardProps) {
       ? <Images className="w-3 h-3" />
       : null;
 
-  // Media (bez wymuszania aspektu — naturalna wysokość)
+  // Ustalany body do wyświetlenia (nad mediami)
+  let bodyText: string | null | undefined = null;
+
+  if (adType === 'DCO') {
+    const cards = adData.cards || [];
+    const current = cards[Math.min(selectedVersion, Math.max(cards.length - 1, 0))];
+    bodyText = (current && current.body) || adData.body || null;
+  } else if (adType === 'CAROUSEL' || adType === 'MULTI_IMAGE') {
+    bodyText = adData.body || adData.cards?.[0]?.body || null;
+  } else if (adType === 'VIDEO') {
+    bodyText = adData.body || adData.cards?.[0]?.body || null;
+  } else if (adType === 'IMAGE') {
+    bodyText = adData.body || adData.cards?.[0]?.body || null;
+  }
+
   const renderMedia = () => {
     if (adType === 'DCO' && adData.cards && adData.cards.length > 0) {
       const current = adData.cards[Math.min(selectedVersion, adData.cards.length - 1)];
@@ -68,7 +82,7 @@ export default function AdCard({ ad }: AdCardProps) {
 
   return (
     <div>
-      {/* KARTA */}
+      {/* Karta */}
       <div className="fb-ad-card group">
         <AdCardHeader 
           pageName={adData.pageName}
@@ -76,19 +90,19 @@ export default function AdCard({ ad }: AdCardProps) {
           platform={adData.publisherPlatform}
         />
 
-        {/* Tekst główny (gdy brak kart) */}
-        {adData.body && !adData.cards && (
+        {/* BODY zawsze NAD mediami, jeśli istnieje wg reguł powyżej */}
+        {bodyText && (
           <div className="px-3 sm:px-4 pb-3">
             <p className="text-sm whitespace-pre-wrap line-clamp-3">
-              {adData.body}
+              {bodyText}
             </p>
           </div>
         )}
 
-        {/* Media (naturalne proporcje) */}
+        {/* Media */}
         {renderMedia()}
 
-        {/* CTA */}
+        {/* CTA bezpośrednio pod mediami */}
         <AdCardFooter 
           linkUrl={adData.linkUrl || adData.cards?.[0]?.linkUrl}
           ctaText={adData.ctaText || adData.cards?.[0]?.ctaText}
@@ -96,7 +110,7 @@ export default function AdCard({ ad }: AdCardProps) {
         />
       </div>
 
-      {/* PASEK WERSJI – poza kartą */}
+      {/* Pasek wersji (poza kartą) */}
       {adType === 'DCO' && adData.cards && adData.cards.length > 1 && (
         <DcoVersionBar
           count={adData.cards.length}
