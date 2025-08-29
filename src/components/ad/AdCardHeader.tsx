@@ -1,12 +1,21 @@
-import { formatPlatform } from '@/utils/adUtils';
+import { formatPlatform, formatDateRange } from '@/utils/adUtils';
 
 interface AdCardHeaderProps {
   pageName: string;
   profilePicUrl?: string | null;
   platform: string;
+  platforms?: string[];
+  startDate?: string;
+  endDate?: string;
 }
 
-export default function AdCardHeader({ pageName, profilePicUrl, platform }: AdCardHeaderProps) {
+export default function AdCardHeader({ 
+  pageName, 
+  profilePicUrl, 
+  platform, 
+  startDate,
+  endDate 
+}: AdCardHeaderProps) {
   return (
     <div className="flex items-start justify-between p-3 sm:p-4">
       <div className="flex items-center gap-3">
@@ -36,6 +45,11 @@ export default function AdCardHeader({ pageName, profilePicUrl, platform }: AdCa
             <span>·</span>
             <span>{formatPlatform(platform)}</span>
           </div>
+          {startDate && (
+            <div className="text-xs text-muted-foreground mt-0.5">
+              {formatDateRange(startDate, endDate)}
+            </div>
+          )}
         </div>
       </div>
     </div>

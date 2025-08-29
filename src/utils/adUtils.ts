@@ -86,3 +86,42 @@ export function formatPlatform(platform: string): string {
   
   return platformMap[platform.toLowerCase()] || platform;
 }
+
+// Format date from ISO string to Polish format
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const months = [
+    'stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca',
+    'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'
+  ];
+  
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  
+  return `${day} ${month} ${year}`;
+}
+
+// Format date range
+export function formatDateRange(startDate: string, endDate?: string): string {
+  const formattedStart = formatDate(startDate);
+  
+  if (!endDate) {
+    return `Od ${formattedStart}`;
+  }
+  
+  const formattedEnd = formatDate(endDate);
+  return `${formattedStart} - ${formattedEnd}`;
+}
+
+// Get platform icon name for Lucide
+export function getPlatformIconName(platform: string): string {
+  const iconMap: { [key: string]: string } = {
+    'facebook': 'Facebook',
+    'instagram': 'Instagram', 
+    'messenger': 'MessageCircle',
+    'audience_network': 'Globe'
+  };
+  
+  return iconMap[platform.toLowerCase()] || 'Globe';
+}
