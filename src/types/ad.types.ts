@@ -18,6 +18,7 @@ export interface AdCard {
   previewImageUrl?: string | null;
   linkUrl: string;
   ctaText: string;
+  linkDescription?: string; // NEW
 }
 
 export interface AdData {
@@ -30,6 +31,7 @@ export interface AdData {
     title?: string;
     ctaText?: string;
     linkUrl?: string;
+    linkDescription?: string; // NEW
     publisherPlatform: string;
     profilePicUrl?: string;
     image?: AdImage;

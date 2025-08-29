@@ -27,7 +27,7 @@ export default function AdCard({ ad }: AdCardProps) {
       ? <Images className="w-3 h-3" />
       : null;
 
-  // Tekst nad mediami (jak w oryginale)
+  // Tekst nad mediami: zgodnie z wcześniejszą logiką
   let bodyText: string | null | undefined = null;
   if (adType === 'DCO') {
     const cards = adData.cards || [];
@@ -53,7 +53,8 @@ export default function AdCard({ ad }: AdCardProps) {
         videoUrls: adData.videoUrls,
         previewImageUrl: adData.previewImageUrl,
         linkUrl: adData.linkUrl || '',
-        ctaText: adData.ctaText || ''
+        ctaText: adData.ctaText || '',
+        linkDescription: adData.linkDescription || '' // NEW safety
       };
       return <AdCardMedia card={videoCard} typeIcon={typeIcon} />;
     }
@@ -63,7 +64,8 @@ export default function AdCard({ ad }: AdCardProps) {
         body: adData.body,
         imageUrl: adData.image?.resized_url || adData.image?.original_url || '',
         linkUrl: adData.linkUrl || '',
-        ctaText: adData.ctaText || ''
+        ctaText: adData.ctaText || '',
+        linkDescription: adData.linkDescription || '' // NEW safety
       };
       return <AdCardMedia card={imageCard} typeIcon={typeIcon} />;
     }
@@ -79,7 +81,6 @@ export default function AdCard({ ad }: AdCardProps) {
           platform={adData.publisherPlatform}
         />
 
-        {/* Tekst zawsze NAD mediami (jeśli istnieje) */}
         {bodyText && (
           <div className="px-3 sm:px-4 pb-3">
             <p className="text-sm whitespace-pre-wrap line-clamp-3">
@@ -88,18 +89,21 @@ export default function AdCard({ ad }: AdCardProps) {
           </div>
         )}
 
-        {/* Media w oryginalnych proporcjach */}
         {renderMedia()}
 
-        {/* Po mediach tylko kafelek domena+CTA (title jest w środku tego kafelka) */}
+        {/* Przekazujemy linkDescription do CTA */}
         <AdCardFooter 
           linkUrl={adData.linkUrl || adData.cards?.[0]?.linkUrl}
           ctaText={adData.ctaText || adData.cards?.[0]?.ctaText}
           title={adData.title || adData.cards?.[0]?.title}
+          linkDescription={
+            adData.linkDescription ||
+            adData.cards?.[0]?.linkDescription ||
+            undefined
+          }
         />
       </div>
 
-      {/* Pasek wersji (poza kartą) */}
       {adType === 'DCO' && adData.cards && adData.cards.length > 1 && (
         <DcoVersionBar
           count={adData.cards.length}
