@@ -1,4 +1,4 @@
-export type AdType = 'IMAGE' | 'VIDEO' | 'CAROUSEL' | 'DCO';
+export type AdType = 'IMAGE' | 'VIDEO' | 'CAROUSEL' | 'DCO' | 'MULTI_IMAGE';
 
 export interface AdImage {
   original_url: string;

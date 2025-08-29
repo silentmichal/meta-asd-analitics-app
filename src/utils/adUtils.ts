@@ -55,3 +55,34 @@ export function validateFacebookPageId(pageId: string): boolean {
   
   return numericPattern.test(pageId) || usernamePattern.test(pageId);
 }
+
+// Decode HTML entities
+export function decodeHtmlEntities(text: string | null | undefined): string {
+  if (!text) return '';
+  
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
+// Extract domain from URL
+export function extractDomain(url: string): string {
+  try {
+    const domain = new URL(url).hostname;
+    return domain.replace('www.', '');
+  } catch {
+    return '';
+  }
+}
+
+// Format platform name
+export function formatPlatform(platform: string): string {
+  const platformMap: { [key: string]: string } = {
+    'facebook': 'Facebook',
+    'instagram': 'Instagram',
+    'messenger': 'Messenger',
+    'audience_network': 'Audience Network'
+  };
+  
+  return platformMap[platform.toLowerCase()] || platform;
+}

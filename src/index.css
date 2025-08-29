@@ -175,6 +175,30 @@
     }
   }
   
+  /* Facebook Ad Card Styles */
+  .fb-ad-card {
+    @apply bg-card rounded-lg overflow-hidden transition-all duration-300;
+    box-shadow: 0 1px 2px 0 hsl(200 6% 10% / 0.05);
+    
+    &:hover {
+      box-shadow: 0 4px 12px 0 hsl(200 6% 10% / 0.1);
+    }
+  }
+  
+  /* DCO Version Selector */
+  .dco-selector {
+    @apply flex gap-1 p-2 bg-muted/50 rounded-lg;
+  }
+  
+  /* Carousel Controls */
+  .carousel-control {
+    @apply absolute top-1/2 -translate-y-1/2 w-8 h-8 bg-background/90 hover:bg-background rounded-full flex items-center justify-center shadow-md transition-all;
+    
+    &:hover {
+      transform: translateY(-50%) scale(1.1);
+    }
+  }
+  
   /* Input Styles */
   .input-base {
     @apply w-full px-4 py-3 bg-input border border-border rounded-xl text-foreground placeholder-muted-foreground transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary;

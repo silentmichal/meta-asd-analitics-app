@@ -3,7 +3,7 @@ import StartScreen from '@/components/StartScreen';
 import LoadingScreen from '@/components/LoadingScreen';
 import Dashboard from '@/components/Dashboard';
 import { AdData, StoredAnalysis } from '@/types/ad.types';
-import { generateMockData } from '@/utils/mockData';
+import { fetchAds, extractPageName } from '@/services/adService';
 import { saveAnalysis, loadAnalysis } from '@/utils/localStorage';
 import { toast } from 'sonner';
 
@@ -31,29 +31,40 @@ const Index = () => {
     setPageId(submittedPageId);
     setAppState('loading');
     
-    // Simulate API call with mock data
-    setTimeout(() => {
-      const mockData = generateMockData(submittedPageId);
-      const mockPageName = 'Nike Poland'; // In real app, this would come from API
+    try {
+      // Fetch ads from API
+      const fetchedAds = await fetchAds(submittedPageId);
+      
+      if (fetchedAds.length === 0) {
+        toast.error('Nie znaleziono reklam dla tego ID');
+        setAppState('start');
+        return;
+      }
+      
+      const pageName = extractPageName(fetchedAds);
       
       const analysis: StoredAnalysis = {
         timestamp: new Date().toISOString(),
-        pageName: mockPageName,
+        pageName: pageName,
         pageId: submittedPageId,
-        totalAds: mockData.length,
-        ads: mockData
+        totalAds: fetchedAds.length,
+        ads: fetchedAds
       };
       
       // Save to localStorage
       saveAnalysis(analysis);
       
       // Update state
-      setAds(mockData);
-      setPageName(mockPageName);
+      setAds(fetchedAds);
+      setPageName(pageName);
       setAppState('dashboard');
       
-      toast.success(`Pobrano ${mockData.length} reklam`);
-    }, 2000); // Simulate loading time
+      toast.success(`Pobrano ${fetchedAds.length} reklam`);
+    } catch (error) {
+      console.error('Error fetching ads:', error);
+      toast.error('Błąd podczas pobierania reklam. Sprawdź ID strony i spróbuj ponownie.');
+      setAppState('start');
+    }
   };
 
   const handleBack = () => {
