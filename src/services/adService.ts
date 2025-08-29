@@ -12,25 +12,19 @@ function decodeHtmlEntities(text: string | null | undefined): string {
 // Parse single ad data
 function parseAdData(item: any): AdData | null {
   try {
-    // Check if we have a details object
     const adInfo = item.details || item;
-    
     if (!adInfo.success) return null;
     
-    // Decode HTML entities in text fields
     const adData = { ...adInfo.adData };
     
-    // Decode main body text
     if (adData.body) {
       adData.body = decodeHtmlEntities(adData.body);
     }
     
-    // Decode title if exists
     if (adData.title) {
       adData.title = decodeHtmlEntities(adData.title);
     }
     
-    // Decode cards data if exists
     if (adData.cards && Array.isArray(adData.cards)) {
       adData.cards = adData.cards.map((card: any) => ({
         ...card,
@@ -62,22 +56,17 @@ export async function fetchAds(pageId: string): Promise<AdData[]> {
     }
     
     const data = await response.json();
-    
-    // Handle different response formats
     let rawAds: any[] = [];
     
     if (data.details && Array.isArray(data.details)) {
-      // Format: { details: [...] }
       rawAds = data.details;
     } else if (Array.isArray(data)) {
-      // Format: [...]
       rawAds = data;
     } else {
       console.error('Unexpected API response format:', data);
       return [];
     }
     
-    // Parse and filter valid ads
     const parsedAds = rawAds
       .map(item => parseAdData(item))
       .filter((ad): ad is AdData => ad !== null);

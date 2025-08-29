@@ -23,13 +23,10 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
     const startIndex = (currentPage - 1) * ADS_PER_PAGE;
     const endIndex = startIndex + ADS_PER_PAGE;
     setDisplayedAds(ads.slice(startIndex, endIndex));
-    
-    // Scroll to top when page changes
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage, ads]);
   
   const handleAnalyzeAI = () => {
-    // Prepare data for AI analysis
     const analysisData = {
       pageName,
       totalAds: ads.length,
@@ -43,14 +40,12 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
         facebook: ads.filter(ad => ad.adData.publisherPlatform === 'Facebook').length,
         instagram: ads.filter(ad => ad.adData.publisherPlatform === 'Instagram').length,
       },
-      sample: ads.slice(0, 5) // Send first 5 ads as sample
+      sample: ads.slice(0, 5)
     };
     
     console.log('AI Analysis Data:', analysisData);
     toast.success('Dane przygotowane do analizy AI');
     
-    // Here you would typically send this data to your AI service
-    // For now, we'll just show a success message
     setTimeout(() => {
       toast.info('Analiza AI zostanie wkrótce udostępniona');
     }, 1000);

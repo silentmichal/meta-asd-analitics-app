@@ -1,17 +1,19 @@
 import { Play } from 'lucide-react';
 import { AdCard } from '@/types/ad.types';
+import { ReactNode } from 'react';
 
 interface AdCardMediaProps {
   card: AdCard;
+  typeIcon?: ReactNode;
 }
 
-export default function AdCardMedia({ card }: AdCardMediaProps) {
+export default function AdCardMedia({ card, typeIcon }: AdCardMediaProps) {
   const isVideo = card.videoUrls && (card.videoUrls.hd || card.videoUrls.sd);
   
   return (
     <div>
       {/* Media Display */}
-      <div className="relative aspect-[1.91/1] bg-muted">
+      <div className="relative aspect-[1.91/1] bg-muted overflow-hidden">
         {isVideo ? (
           <>
             <img
@@ -38,13 +40,20 @@ export default function AdCardMedia({ card }: AdCardMediaProps) {
             }}
           />
         )}
+
+        {/* Type Badge on media */}
+        {typeIcon && (
+          <div className="absolute top-3 right-3 w-6 h-6 bg-background/80 rounded-full flex items-center justify-center">
+            {typeIcon}
+          </div>
+        )}
       </div>
       
       {/* Text Content */}
       {(card.title || card.body) && (
         <div className="p-3 sm:p-4">
           {card.title && (
-            <h4 className="font-medium text-sm mb-1">{card.title}</h4>
+            <h4 className="font-medium text-sm mb-1 line-clamp-1">{card.title}</h4>
           )}
           {card.body && (
             <p className="text-sm text-muted-foreground line-clamp-3">

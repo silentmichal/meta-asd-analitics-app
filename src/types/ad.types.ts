@@ -32,12 +32,9 @@ export interface AdData {
     linkUrl?: string;
     publisherPlatform: string;
     profilePicUrl?: string;
-    // For IMAGE type
     image?: AdImage;
-    // For VIDEO type
     previewImageUrl?: string;
     videoUrls?: VideoUrls;
-    // For CAROUSEL and DCO types
     cards?: AdCard[];
   };
 }

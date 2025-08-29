@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { AdCard } from '@/types/ad.types';
 
 interface AdCardCarouselProps {
   cards: AdCard[];
+  typeIcon?: ReactNode;
 }
 
-export default function AdCardCarousel({ cards }: AdCardCarouselProps) {
+export default function AdCardCarousel({ cards, typeIcon }: AdCardCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   
   const handlePrevious = () => {
@@ -24,7 +25,7 @@ export default function AdCardCarousel({ cards }: AdCardCarouselProps) {
   return (
     <div className="relative">
       {/* Image/Video Display */}
-      <div className="relative aspect-[1.91/1] bg-muted">
+      <div className="relative aspect-[1.91/1] bg-muted overflow-hidden">
         {currentCard.videoUrls && (currentCard.videoUrls.hd || currentCard.videoUrls.sd) ? (
           <video
             src={currentCard.videoUrls.hd || currentCard.videoUrls.sd || ''}
@@ -39,8 +40,15 @@ export default function AdCardCarousel({ cards }: AdCardCarouselProps) {
             className="w-full h-full object-cover"
             onError={(e) => {
               (e.target as HTMLImageElement).src = '/placeholder.svg';
-            }}
+            })}
           />
+        )}
+
+        {/* Type Badge */}
+        {typeIcon && (
+          <div className="absolute top-3 right-3 w-6 h-6 bg-background/80 rounded-full flex items-center justify-center">
+            {typeIcon}
+          </div>
         )}
         
         {/* Navigation Buttons */}
@@ -87,7 +95,7 @@ export default function AdCardCarousel({ cards }: AdCardCarouselProps) {
       {(currentCard.title || currentCard.body) && (
         <div className="p-3 sm:p-4">
           {currentCard.title && (
-            <h4 className="font-medium text-sm mb-1">{currentCard.title}</h4>
+            <h4 className="font-medium text-sm mb-1 line-clamp-1">{currentCard.title}</h4>
           )}
           {currentCard.body && (
             <p className="text-sm text-muted-foreground line-clamp-2">

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { AdCard } from '@/types/ad.types';
-import AdCardCarousel from './AdCardCarousel';
 import AdCardMedia from './AdCardMedia';
 
 interface AdCardDCOProps {
@@ -11,8 +10,6 @@ export default function AdCardDCO({ cards }: AdCardDCOProps) {
   const [selectedVersion, setSelectedVersion] = useState(0);
   
   if (!cards || cards.length === 0) return null;
-  
-  // If only one card, just display it
   if (cards.length === 1) {
     return <AdCardMedia card={cards[0]} />;
   }
@@ -21,25 +18,29 @@ export default function AdCardDCO({ cards }: AdCardDCOProps) {
   
   return (
     <div>
-      {/* Version Selector */}
-      <div className="flex gap-1 p-3 sm:p-4 pb-0">
-        {cards.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setSelectedVersion(index)}
-            className={`flex-1 py-1.5 px-2 text-xs font-medium rounded-md transition-all ${
-              selectedVersion === index
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted hover:bg-muted/80 text-muted-foreground'
-            }`}
-          >
-            Wersja {index + 1}
-          </button>
-        ))}
-      </div>
-      
-      {/* Display Current Version */}
+      {/* Najpierw media */}
       <AdCardMedia card={currentCard} />
+      
+      {/* Wersje POD mediami (segmented control) */}
+      <div className="px-3 sm:px-4 pt-2 pb-1">
+        <div className="grid grid-cols-3 gap-1 bg-muted/60 rounded-lg p-1">
+          {cards.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setSelectedVersion(index)}
+              className={`py-1.5 text-xs font-medium rounded-md transition-all ${
+                selectedVersion === index
+                  ? 'bg-card shadow-sm'
+                  : 'hover:bg-muted text-muted-foreground'
+              }`}
+              aria-pressed={selectedVersion === index}
+              aria-label={`Wersja ${index + 1}`}
+            >
+              Wersja {index + 1}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

@@ -34,10 +34,10 @@ export default function AdCardFooter({ linkUrl, ctaText, title }: AdCardFooterPr
             </div>
             
             {ctaText && (
-              <button className="px-4 py-1.5 bg-muted hover:bg-muted/80 rounded-md text-sm font-medium transition-colors flex items-center gap-1.5">
+              <span className="px-4 py-1.5 bg-muted hover:bg-muted/80 rounded-md text-sm font-medium transition-colors inline-flex items-center gap-1.5">
                 {ctaText}
                 <ExternalLink className="w-3 h-3" />
-              </button>
+              </span>
             )}
           </div>
         </a>

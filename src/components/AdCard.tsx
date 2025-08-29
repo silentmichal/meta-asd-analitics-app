@@ -12,15 +12,26 @@ interface AdCardProps {
 
 export default function AdCard({ ad }: AdCardProps) {
   const { adType, adData } = ad;
+
+  const hasVideo = Boolean(
+    adType === 'VIDEO' ||
+    adData.cards?.[0]?.videoUrls?.hd ||
+    adData.cards?.[0]?.videoUrls?.sd
+  );
+
+  const typeIcon = hasVideo ? <Play className="w-3 h-3" /> :
+    (adType === 'CAROUSEL' || adType === 'MULTI_IMAGE' || adType === 'DCO')
+      ? <Images className="w-3 h-3" />
+      : null;
   
-  // Render media based on ad type
   const renderMedia = () => {
     if (adType === 'DCO' && adData.cards) {
+      // Wersje i media obsłuży wewnątrz AdCardDCO (media -> wersje pod spodem)
       return <AdCardDCO cards={adData.cards} />;
     }
     
     if ((adType === 'CAROUSEL' || adType === 'MULTI_IMAGE') && adData.cards) {
-      return <AdCardCarousel cards={adData.cards} />;
+      return <AdCardCarousel cards={adData.cards} typeIcon={typeIcon} />;
     }
     
     if (adType === 'VIDEO') {
@@ -33,7 +44,7 @@ export default function AdCard({ ad }: AdCardProps) {
         linkUrl: adData.linkUrl || '',
         ctaText: adData.ctaText || ''
       };
-      return <AdCardMedia card={videoCard} />;
+      return <AdCardMedia card={videoCard} typeIcon={typeIcon} />;
     }
     
     if (adType === 'IMAGE') {
@@ -44,34 +55,21 @@ export default function AdCard({ ad }: AdCardProps) {
         linkUrl: adData.linkUrl || '',
         ctaText: adData.ctaText || ''
       };
-      return <AdCardMedia card={imageCard} />;
+      return <AdCardMedia card={imageCard} typeIcon={typeIcon} />;
     }
     
-    // Fallback for unknown types
-    return null;
-  };
-  
-  // Get type indicator icon
-  const getTypeIcon = () => {
-    if (adType === 'VIDEO' || (adData.cards?.[0]?.videoUrls?.hd || adData.cards?.[0]?.videoUrls?.sd)) {
-      return <Play className="w-3 h-3" />;
-    }
-    if (adType === 'CAROUSEL' || adType === 'MULTI_IMAGE' || adType === 'DCO') {
-      return <Images className="w-3 h-3" />;
-    }
     return null;
   };
   
   return (
     <div className="fb-ad-card group">
-      {/* Header */}
       <AdCardHeader 
         pageName={adData.pageName}
         profilePicUrl={adData.profilePicUrl}
         platform={adData.publisherPlatform}
       />
-      
-      {/* Main Ad Text (if exists and not in cards) */}
+
+      {/* Główny tekst reklamy (jeśli bez kart) */}
       {adData.body && !adData.cards && (
         <div className="px-3 sm:px-4 pb-3">
           <p className="text-sm whitespace-pre-wrap line-clamp-3">
@@ -80,22 +78,15 @@ export default function AdCard({ ad }: AdCardProps) {
         </div>
       )}
       
-      {/* Media Content */}
+      {/* Media */}
       {renderMedia()}
       
-      {/* Footer with CTA */}
+      {/* Footer / CTA */}
       <AdCardFooter 
         linkUrl={adData.linkUrl || adData.cards?.[0]?.linkUrl}
         ctaText={adData.ctaText || adData.cards?.[0]?.ctaText}
         title={adData.title || adData.cards?.[0]?.title}
       />
-      
-      {/* Type Badge */}
-      {getTypeIcon() && (
-        <div className="absolute top-3 right-3 w-6 h-6 bg-background/80 rounded-full flex items-center justify-center">
-          {getTypeIcon()}
-        </div>
-      )}
     </div>
   );
 }
