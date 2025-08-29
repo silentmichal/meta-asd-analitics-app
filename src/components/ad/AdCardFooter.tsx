@@ -5,28 +5,27 @@ interface AdCardFooterProps {
   linkUrl?: string;
   ctaText?: string;
   title?: string;
-  linkDescription?: string;
-}
-
-function shouldShowLinkDescription(val?: string): boolean {
-  if (!val) return false;
-  const t = val.trim();
-  if (!t) return false;
-  if (t.toLowerCase() === 'no') return false;
-  if (/{{.*}}/i.test(t)) return false; // ukryj templaty
-  return true;
+  linkDescription?: string; // NEW
 }
 
 export default function AdCardFooter({ linkUrl, ctaText, title, linkDescription }: AdCardFooterProps) {
   if (!linkUrl) return null;
 
   const domain = extractDomain(linkUrl);
-  const showLinkDescription = shouldShowLinkDescription(linkDescription);
+  const showLinkDescription =
+    typeof linkDescription === 'string' &&
+    linkDescription.trim() !== '' &&
+    linkDescription.trim().toLowerCase() !== 'no';
 
   return (
     <div className="p-3 sm:p-4 pt-0">
       <div className="border border-border rounded-lg overflow-hidden hover:bg-muted/50 transition-colors">
-        <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="block p-3">
+        <a
+          href={linkUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block p-3"
+        >
           <div className="flex items-center justify-between gap-3">
             <div className="flex-1 min-w-0">
               {domain && (
