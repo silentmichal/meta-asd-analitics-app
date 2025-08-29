@@ -18,71 +18,63 @@ export default function AdCardCarousel({ cards, typeIcon }: AdCardCarouselProps)
   const currentCard = cards[currentIndex];
 
   return (
-    <div className="relative">
-      <div className="relative bg-muted overflow-hidden">
-        {currentCard.videoUrls && (currentCard.videoUrls.hd || currentCard.videoUrls.sd) ? (
-          <video
-            src={currentCard.videoUrls.hd || currentCard.videoUrls.sd || ''}
-            poster={currentCard.previewImageUrl || currentCard.imageUrl}
-            controls
-            className="w-full h-auto object-contain"
-          />
-        ) : (
-          <img
-            src={currentCard.imageUrl}
-            alt={currentCard.title || 'Ad image'}
-            className="w-full h-auto object-contain"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = '/placeholder.svg';
-            }}
-          />
-        )}
+    <div className="relative bg-muted overflow-hidden">
+      {/* Media tylko – bez sekcji tekstowych */}
+      {currentCard.videoUrls && (currentCard.videoUrls.hd || currentCard.videoUrls.sd) ? (
+        <video
+          src={currentCard.videoUrls.hd || currentCard.videoUrls.sd || ''}
+          poster={currentCard.previewImageUrl || currentCard.imageUrl}
+          controls
+          className="w-full h-auto object-contain"
+        />
+      ) : (
+        <img
+          src={currentCard.imageUrl}
+          alt={currentCard.title || 'Ad image'}
+          className="w-full h-auto object-contain"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = '/placeholder.svg';
+          }}
+        />
+      )}
 
-        {typeIcon && (
-          <div className="absolute top-3 right-3 w-6 h-6 bg-background/80 rounded-full flex items-center justify-center">
-            {typeIcon}
-          </div>
-        )}
+      {typeIcon && (
+        <div className="absolute top-3 right-3 w-6 h-6 bg-background/80 rounded-full flex items-center justify-center">
+          {typeIcon}
+        </div>
+      )}
 
-        {cards.length > 1 && (
-          <>
+      {cards.length > 1 && (
+        <>
+          <button
+            onClick={handlePrevious}
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-background/80 hover:bg-background rounded-full flex items-center justify-center shadow-md transition-all"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleNext}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-background/80 hover:bg-background rounded-full flex items-center justify-center shadow-md transition-all"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </>
+      )}
+
+      {cards.length > 1 && (
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+          {cards.map((_, index) => (
             <button
-              onClick={handlePrevious}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-background/80 hover:bg-background rounded-full flex items-center justify-center shadow-md transition-all"
-              aria-label="Previous slide"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              onClick={handleNext}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-background/80 hover:bg-background rounded-full flex items-center justify-center shadow-md transition-all"
-              aria-label="Next slide"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </>
-        )}
-
-        {cards.length > 1 && (
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-            {cards.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`w-1.5 h-1.5 rounded-full transition-all ${
-                  index === currentIndex ? 'bg-background w-4' : 'bg-background/50 hover:bg-background/70'
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {(currentCard.title || currentCard.body) && (
-        <div className="p-3 sm:p-4">
-          {currentCard.title && <h4 className="font-medium text-sm mb-1 line-clamp-1">{currentCard.title}</h4>}
-          {currentCard.body && <p className="text-sm text-muted-foreground line-clamp-2">{currentCard.body}</p>}
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`w-1.5 h-1.5 rounded-full transition-all ${
+                index === currentIndex ? 'bg-background w-4' : 'bg-background/50 hover:bg-background/70'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
         </div>
       )}
     </div>
