@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Brain, ChevronLeft } from 'lucide-react';
+import { Bot, ArrowLeft } from 'lucide-react';
 import { AdData } from '@/types/ad.types';
 import AdCard from './AdCard';
 import Pagination from './Pagination';
@@ -57,7 +57,7 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-subtle">
       {/* Header */}
       <header className="bg-card border-b border-border shadow-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-6">
@@ -68,20 +68,20 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
                 className="p-2 rounded-lg hover:bg-muted transition-colors"
                 aria-label="Go back"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ArrowLeft className="w-5 h-5" />
               </button>
               <div>
-                <h1 className="text-2xl font-semibold">{pageName}</h1>
-                <p className="text-sm text-muted-foreground">
+                <h1 className="text-2xl font-bold">{pageName}</h1>
+                <p className="text-muted-foreground">
                   {ads.length} {ads.length === 1 ? 'reklama' : 'reklam'} znalezionych
                 </p>
               </div>
             </div>
             <button
               onClick={handleAnalyzeAI}
-              className="btn-success flex items-center gap-2"
+              className="btn-primary flex items-center gap-2"
             >
-              <Brain className="w-5 h-5" />
+              <Bot className="w-5 h-5" />
               <span>Analizuj AI</span>
             </button>
           </div>
@@ -93,7 +93,7 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
         {ads.length === 0 ? (
           <div className="text-center py-20">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-muted rounded-full mb-4">
-              <Brain className="w-10 h-10 text-muted-foreground" />
+              <Bot className="w-10 h-10 text-muted-foreground" />
             </div>
             <h2 className="text-xl font-semibold mb-2">Brak reklam</h2>
             <p className="text-muted-foreground">

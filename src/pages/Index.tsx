@@ -3,7 +3,7 @@ import StartScreen from '@/components/StartScreen';
 import LoadingScreen from '@/components/LoadingScreen';
 import Dashboard from '@/components/Dashboard';
 import { AdData, StoredAnalysis } from '@/types/ad.types';
-import { fetchAdsFromWebhook } from '@/services/adService';
+import { generateMockData } from '@/utils/mockData';
 import { saveAnalysis, loadAnalysis } from '@/utils/localStorage';
 import { toast } from 'sonner';
 
@@ -31,38 +31,29 @@ const Index = () => {
     setPageId(submittedPageId);
     setAppState('loading');
     
-    try {
-      // Fetch real data from webhook
-      const { ads: fetchedAds, pageName: fetchedPageName } = await fetchAdsFromWebhook(submittedPageId);
-      
-      if (fetchedAds.length === 0) {
-        toast.error('Nie znaleziono żadnych reklam dla tej strony');
-        setAppState('start');
-        return;
-      }
+    // Simulate API call with mock data
+    setTimeout(() => {
+      const mockData = generateMockData(submittedPageId);
+      const mockPageName = 'Nike Poland'; // In real app, this would come from API
       
       const analysis: StoredAnalysis = {
         timestamp: new Date().toISOString(),
-        pageName: fetchedPageName,
+        pageName: mockPageName,
         pageId: submittedPageId,
-        totalAds: fetchedAds.length,
-        ads: fetchedAds
+        totalAds: mockData.length,
+        ads: mockData
       };
       
       // Save to localStorage
       saveAnalysis(analysis);
       
       // Update state
-      setAds(fetchedAds);
-      setPageName(fetchedPageName);
+      setAds(mockData);
+      setPageName(mockPageName);
       setAppState('dashboard');
       
-      toast.success(`Pobrano ${fetchedAds.length} reklam z ${fetchedPageName}`);
-    } catch (error) {
-      console.error('Error fetching ads:', error);
-      toast.error('Wystąpił błąd podczas pobierania danych. Spróbuj ponownie.');
-      setAppState('start');
-    }
+      toast.success(`Pobrano ${mockData.length} reklam`);
+    }, 2000); // Simulate loading time
   };
 
   const handleBack = () => {

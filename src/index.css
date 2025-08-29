@@ -8,56 +8,61 @@
 
 @layer base {
   :root {
-    /* Core Colors - Professional Business Palette */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 17%;
+    /* Core Colors - HSL Values */
+    --background: 0 0% 99%;
+    --foreground: 200 6% 10%;
     
-    /* Primary - Dark Gray */
-    --primary: 0 0% 10%;
+    /* Primary - Coral Red */
+    --primary: 0 71% 66%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 0 0% 20%;
+    --primary-hover: 0 75% 60%;
     
-    /* Secondary - Light Gray */
-    --secondary: 210 17% 98%;
-    --secondary-foreground: 0 0% 10%;
-    --secondary-hover: 210 14% 93%;
+    /* Secondary - Teal */
+    --secondary: 176 42% 63%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-hover: 176 45% 55%;
     
-    /* Accent - Red */
-    --accent: 354 84% 61%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent - Sunny Yellow */
+    --accent: 48 100% 71%;
+    --accent-foreground: 200 6% 10%;
     
-    /* Success - Green */
-    --success: 152 68% 59%;
+    /* Success - Mint Green */
+    --success: 157 27% 64%;
     --success-foreground: 0 0% 100%;
     
-    /* Warning - Yellow */
-    --warning: 45 100% 72%;
-    --warning-foreground: 0 0% 10%;
+    /* Warning - Cream Yellow */
+    --warning: 43 100% 83%;
+    --warning-foreground: 200 6% 10%;
     
-    /* Destructive - Red */
-    --destructive: 354 84% 61%;
+    /* Destructive - Pink */
+    --destructive: 341 97% 74%;
     --destructive-foreground: 0 0% 100%;
     
     /* Neutral Colors */
-    --muted: 210 17% 98%;
-    --muted-foreground: 215 14% 45%;
+    --muted: 210 7% 97%;
+    --muted-foreground: 210 5% 45%;
     
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 17%;
+    --card-foreground: 200 6% 10%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 17%;
+    --popover-foreground: 200 6% 10%;
     
-    --border: 214 32% 91%;
-    --input: 210 17% 98%;
-    --ring: 354 84% 61%;
+    --border: 210 14% 91%;
+    --input: 210 14% 95%;
+    --ring: 0 71% 66%;
     
-    /* Shadows - Professional */
-    --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.1);
-    --shadow-xl: 0 12px 35px rgba(0, 0, 0, 0.12);
-    --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.1);
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(200 6% 10% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(200 6% 10% / 0.1);
+    --shadow-lg: 0 20px 40px hsl(200 6% 10% / 0.1);
+    --shadow-xl: 0 25px 50px -12px hsl(200 6% 10% / 0.15);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.3);
     
     /* Border Radius */
     --radius: 0.5rem;
@@ -130,15 +135,15 @@
 }
 
 @layer components {
-  /* Button Variants - Professional Design */
+  /* Button Variants */
   .btn-primary {
-    @apply inline-flex items-center justify-center font-semibold rounded-lg px-6 py-3 bg-accent text-accent-foreground transition-all duration-300;
-    box-shadow: var(--shadow-sm);
+    @apply inline-flex items-center justify-center font-medium rounded-full px-6 py-3 text-primary-foreground transition-all duration-300;
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-md);
     
     &:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
-      filter: brightness(0.95);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
     }
     
     &:active {
@@ -148,15 +153,6 @@
     &:disabled {
       @apply opacity-50 cursor-not-allowed;
       transform: none !important;
-    }
-  }
-  
-  .btn-success {
-    @apply inline-flex items-center justify-center font-semibold rounded-lg px-6 py-3 bg-success text-success-foreground transition-all duration-300;
-    
-    &:hover {
-      transform: translateY(-1px);
-      filter: brightness(0.95);
     }
   }
   
@@ -179,9 +175,9 @@
     }
   }
   
-  /* Input Styles - Professional */
+  /* Input Styles */
   .input-base {
-    @apply w-full px-5 py-4 bg-secondary border-2 border-border rounded-lg text-foreground placeholder-muted-foreground transition-all duration-300 focus:outline-none focus:ring-0 focus:border-accent focus:bg-background;
+    @apply w-full px-4 py-3 bg-input border border-border rounded-xl text-foreground placeholder-muted-foreground transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary;
   }
   
   /* Grid Layout */
@@ -225,83 +221,11 @@
     animation: spin 1s linear infinite;
   }
   
-  /* Professional Text Styles */
+  /* Gradient Text */
   .gradient-text {
-    @apply text-foreground font-semibold;
-  }
-  
-  /* Ad Card Styles */
-  .ad-card {
-    @apply bg-card border border-border rounded-xl overflow-hidden transition-all duration-300 cursor-pointer;
-    
-    &:hover {
-      @apply border-accent;
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-hover);
-    }
-  }
-  
-  .ad-card-header {
-    @apply flex justify-between items-center p-4 border-b border-border;
-  }
-  
-  .brand-info {
-    @apply flex items-center gap-3;
-  }
-  
-  .brand-logo {
-    @apply w-10 h-10 rounded-full object-cover bg-muted;
-  }
-  
-  .brand-name {
-    @apply text-sm font-semibold text-foreground m-0;
-  }
-  
-  .sponsored-label {
-    @apply text-xs text-muted-foreground;
-  }
-  
-  .ad-content {
-    @apply px-4 py-3;
-  }
-  
-  .ad-text {
-    @apply text-sm leading-relaxed text-foreground m-0;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
-  .ad-image-container {
-    @apply relative;
-  }
-  
-  .ad-main-image {
-    @apply w-full h-48 object-cover;
-  }
-  
-  .video-overlay {
-    @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-black/80 rounded-full flex items-center justify-center text-white;
-  }
-  
-  .carousel-indicators {
-    @apply absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1.5;
-  }
-  
-  .carousel-indicators .dot {
-    @apply w-2 h-2 rounded-full bg-white/60;
-  }
-  
-  .carousel-indicators .dot.active {
-    @apply bg-white w-6;
-  }
-  
-  .ad-link-preview {
-    @apply px-4 py-3 bg-secondary border-t border-border;
-  }
-  
-  .link-text {
-    @apply text-xs text-muted-foreground;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
