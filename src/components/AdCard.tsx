@@ -27,7 +27,7 @@ export default function AdCard({ ad }: AdCardProps) {
       ? <Images className="w-3 h-3" />
       : null;
 
-  // Tekst nad mediami: zgodnie z wcześniejszą logiką
+  // BODY nad mediami – bez zmian
   let bodyText: string | null | undefined = null;
   if (adType === 'DCO') {
     const cards = adData.cards || [];
@@ -54,7 +54,7 @@ export default function AdCard({ ad }: AdCardProps) {
         previewImageUrl: adData.previewImageUrl,
         linkUrl: adData.linkUrl || '',
         ctaText: adData.ctaText || '',
-        linkDescription: adData.linkDescription || '' // NEW safety
+        linkDescription: adData.linkDescription || ''
       };
       return <AdCardMedia card={videoCard} typeIcon={typeIcon} />;
     }
@@ -65,20 +65,29 @@ export default function AdCard({ ad }: AdCardProps) {
         imageUrl: adData.image?.resized_url || adData.image?.original_url || '',
         linkUrl: adData.linkUrl || '',
         ctaText: adData.ctaText || '',
-        linkDescription: adData.linkDescription || '' // NEW safety
+        linkDescription: adData.linkDescription || ''
       };
       return <AdCardMedia card={imageCard} typeIcon={typeIcon} />;
     }
     return null;
   };
 
+  // --- NOWE: pobranie meta do nagłówka z ad.basic?.json (backend już to zwraca)
+  const startDate = (ad as any)?.basic?.json?.ad_delivery_start_time as string | undefined;
+  const stopDate  = (ad as any)?.basic?.json?.ad_delivery_stop_time as string | undefined | null;
+  const platforms = (ad as any)?.basic?.json?.publisher_platforms as string[] | undefined;
+
   return (
     <div>
       <div className="fb-ad-card group">
-        <AdCardHeader 
+        <AdCardHeader
           pageName={adData.pageName}
           profilePicUrl={adData.profilePicUrl}
           platform={adData.publisherPlatform}
+          // ↓ DODANE: druga linia w headerze
+          startDate={startDate}
+          stopDate={stopDate ?? undefined}
+          platforms={platforms}
         />
 
         {bodyText && (
@@ -91,7 +100,6 @@ export default function AdCard({ ad }: AdCardProps) {
 
         {renderMedia()}
 
-        {/* Przekazujemy linkDescription do CTA */}
         <AdCardFooter 
           linkUrl={
             adType === 'DCO' && adData.cards 

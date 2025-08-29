@@ -9,7 +9,7 @@ export interface VideoUrls {
   hd: string | null;
   sd: string | null;
 }
-
+Miałeś tylko poprawić widoki, ponieważ logika, typy i akcje zostały poprawione. To ci wkleja, jak ono wygląda, i tylko popraw widoki. 
 export interface AdCard {
   title: string;
   body: string | null;
@@ -19,29 +19,6 @@ export interface AdCard {
   linkUrl: string;
   ctaText: string;
   linkDescription?: string; // NEW
-}
-
-export interface AdBasicInfo {
-  json: {
-    id: string;
-    ad_snapshot_url: string;
-    ad_creation_time: string;
-    page_id: string;
-    page_name: string;
-    ad_creative_bodies?: string[];
-    ad_creative_link_titles?: string[];
-    ad_creative_link_descriptions?: string[];
-    ad_creative_link_captions?: string[];
-    publisher_platforms: string[];
-    ad_delivery_start_time: string;
-    ad_delivery_stop_time?: string;
-  };
-  pairedItem?: {
-    item: number;
-    sourceOverwrite?: {
-      previousNode: string;
-    };
-  };
 }
 
 export interface AdData {
@@ -62,7 +39,6 @@ export interface AdData {
     videoUrls?: VideoUrls;
     cards?: AdCard[];
   };
-  basic?: AdBasicInfo; // NEW - contains platform and date information
 }
 
 export interface StoredAnalysis {
