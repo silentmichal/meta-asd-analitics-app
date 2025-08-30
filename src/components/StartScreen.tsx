@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { BeamsBackground } from '@/components/ui/beams-background';
 import { AnimatedText } from '@/components/ui/animated-underline-text-one';
 import { motion } from 'motion/react';
+import { Button } from '@/components/ui/neon-button';
 
 interface StartScreenProps {
   onSubmit: (pageId: string) => void;
@@ -107,20 +108,22 @@ export default function StartScreen({ onSubmit }: StartScreenProps) {
                 )}
               </div>
               
-              <button
+              <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-12 px-6 bg-white text-black font-semibold rounded-lg transition-all duration-200 hover:bg-white/90 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+                variant="solid"
+                size="lg"
+                className="w-full"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center gap-2">
-                    <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     <span>Przetwarzanie...</span>
                   </div>
                 ) : (
                   'Pobierz Reklamy'
                 )}
-              </button>
+              </Button>
             </form>
           </div>
         </div>
