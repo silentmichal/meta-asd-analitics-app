@@ -53,7 +53,7 @@ export default function StartScreen({ onSubmit }: StartScreenProps) {
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
         {/* Main header with animated underline */}
         <AnimatedText 
-          text="Analizuj Konkurencję"
+          text="Analizuj reklamy konkurencji"
           textClassName="text-4xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-[0_0_30px_rgba(147,51,234,0.5)]"
           underlineClassName="text-purple-400"
           underlineDuration={1.5}
