@@ -1,4 +1,12 @@
 export type AdType = 'IMAGE' | 'VIDEO' | 'CAROUSEL' | 'DCO' | 'MULTI_IMAGE' | 'DPA';
+export type AdStatus = 'ALL' | 'ACTIVE' | 'INACTIVE';
+
+export interface AdFilters {
+  pageId: string;
+  status?: AdStatus;
+  dateFrom?: string; // format YYYY-MM-DD
+  dateTo?: string;   // format YYYY-MM-DD
+}
 
 export interface AdImage {
   original_url: string;

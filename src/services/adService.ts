@@ -1,4 +1,4 @@
-import { AdData } from '@/types/ad.types';
+import { AdData, AdFilters } from '@/types/ad.types';
 
 // Decode HTML entities
 function decodeHtmlEntities(text: string | null | undefined): string {
@@ -67,10 +67,26 @@ function parseAdData(item: any): AdData | null {
 }
 
 // Fetch ads from API
-export async function fetchAds(pageId: string): Promise<AdData[]> {
+export async function fetchAds(filters: AdFilters): Promise<AdData[]> {
   try {
+    // Build query parameters
+    const params = new URLSearchParams();
+    params.append('id', filters.pageId);
+    
+    if (filters.status && filters.status !== 'ALL') {
+      params.append('status', filters.status);
+    }
+    
+    if (filters.dateFrom) {
+      params.append('dateFrom', filters.dateFrom);
+    }
+    
+    if (filters.dateTo) {
+      params.append('dateTo', filters.dateTo);
+    }
+    
     const response = await fetch(
-      `https://n8n.akademia.click/webhook/f319c524-6a23-4f7d-b4e4-25741eb39063?id=${pageId}`
+      `https://n8n.akademia.click/webhook/f319c524-6a23-4f7d-b4e4-25741eb39063?${params.toString()}`
     );
     if (!response.ok) throw new Error(`Failed to fetch ads: ${response.status}`);
 

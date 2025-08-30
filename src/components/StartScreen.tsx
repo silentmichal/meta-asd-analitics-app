@@ -5,13 +5,24 @@ import { toast } from 'sonner';
 import { BeamsBackground } from '@/components/ui/beams-background';
 import { AnimatedText } from '@/components/ui/animated-underline-text-one';
 import { motion } from 'motion/react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
+import { pl } from 'date-fns/locale';
+import { AdStatus, AdFilters } from '@/types/ad.types';
 
 interface StartScreenProps {
-  onSubmit: (pageId: string) => void;
+  onSubmit: (filters: AdFilters) => void;
 }
 
 export default function StartScreen({ onSubmit }: StartScreenProps) {
   const [pageId, setPageId] = useState('');
+  const [status, setStatus] = useState<AdStatus>('ALL');
+  const [dateFrom, setDateFrom] = useState<Date | undefined>();
+  const [dateTo, setDateTo] = useState<Date | undefined>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -39,13 +50,26 @@ export default function StartScreen({ onSubmit }: StartScreenProps) {
       toast.error('Nieprawidłowy format ID strony Facebook');
       return;
     }
+
+    // Validate date range
+    if (dateFrom && dateTo && dateFrom > dateTo) {
+      toast.error('Data końcowa nie może być wcześniejsza niż data początkowa');
+      return;
+    }
     
     setIsLoading(true);
     saveLastPageId(trimmedId);
     
+    const filters: AdFilters = {
+      pageId: trimmedId,
+      status: status !== 'ALL' ? status : undefined,
+      dateFrom: dateFrom ? format(dateFrom, 'yyyy-MM-dd') : undefined,
+      dateTo: dateTo ? format(dateTo, 'yyyy-MM-dd') : undefined
+    };
+    
     // Simulate API call delay
     setTimeout(() => {
-      onSubmit(trimmedId);
+      onSubmit(filters);
     }, 500);
   };
 
@@ -86,7 +110,7 @@ export default function StartScreen({ onSubmit }: StartScreenProps) {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="pageId" className="block text-sm font-medium mb-2 text-white/90">
-                  Wklej ID strony Facebooka
+                  Wklej ID strony Facebooka <span className="text-red-400">*</span>
                 </label>
                 <input
                   id="pageId"
@@ -105,6 +129,86 @@ export default function StartScreen({ onSubmit }: StartScreenProps) {
                 {error && (
                   <p className="mt-2 text-sm text-red-400">{error}</p>
                 )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-3 text-white/90">
+                  Status reklam <span className="text-white/50">(opcjonalne)</span>
+                </label>
+                <RadioGroup value={status} onValueChange={(value: AdStatus) => setStatus(value)}>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="ALL" id="all" className="border-white/40 text-purple-400" />
+                      <Label htmlFor="all" className="text-white/80 cursor-pointer">Wszystkie</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="ACTIVE" id="active" className="border-white/40 text-purple-400" />
+                      <Label htmlFor="active" className="text-white/80 cursor-pointer">Aktywne</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="INACTIVE" id="inactive" className="border-white/40 text-purple-400" />
+                      <Label htmlFor="inactive" className="text-white/80 cursor-pointer">Nieaktywne</Label>
+                    </div>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-white/90">
+                    Data od <span className="text-white/50">(opcjonalne)</span>
+                  </label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className="w-full h-11 px-3 bg-black/20 backdrop-blur-sm border border-white/20 rounded-lg text-left text-white hover:border-purple-400/50 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-200 flex items-center justify-between"
+                      >
+                        {dateFrom ? format(dateFrom, 'dd.MM.yyyy') : <span className="text-white/50">Wybierz</span>}
+                        <CalendarIcon className="h-4 w-4 text-white/50" />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-black/90 backdrop-blur-md border-white/20" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={dateFrom}
+                        onSelect={setDateFrom}
+                        initialFocus
+                        className="bg-transparent text-white"
+                        locale={pl}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-white/90">
+                    Data do <span className="text-white/50">(opcjonalne)</span>
+                  </label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className="w-full h-11 px-3 bg-black/20 backdrop-blur-sm border border-white/20 rounded-lg text-left text-white hover:border-purple-400/50 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-200 flex items-center justify-between"
+                        disabled={!dateFrom}
+                      >
+                        {dateTo ? format(dateTo, 'dd.MM.yyyy') : <span className="text-white/50">Wybierz</span>}
+                        <CalendarIcon className="h-4 w-4 text-white/50" />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-black/90 backdrop-blur-md border-white/20" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={dateTo}
+                        onSelect={setDateTo}
+                        disabled={(date) => dateFrom ? date < dateFrom : false}
+                        initialFocus
+                        className="bg-transparent text-white"
+                        locale={pl}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </div>
               
               <button

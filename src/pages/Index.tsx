@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import StartScreen from '@/components/StartScreen';
 import LoadingScreen from '@/components/LoadingScreen';
 import Dashboard from '@/components/Dashboard';
-import { AdData, StoredAnalysis } from '@/types/ad.types';
+import { AdData, StoredAnalysis, AdFilters } from '@/types/ad.types';
 import { fetchAds, extractPageName } from '@/services/adService';
 import { saveAnalysis, loadAnalysis } from '@/utils/localStorage';
 import { toast } from 'sonner';
@@ -27,13 +27,13 @@ const Index = () => {
     }
   }, []);
 
-  const handlePageIdSubmit = async (submittedPageId: string) => {
-    setPageId(submittedPageId);
+  const handleFiltersSubmit = async (filters: AdFilters) => {
+    setPageId(filters.pageId);
     setAppState('loading');
     
     try {
       // Fetch ads from API
-      const fetchedAds = await fetchAds(submittedPageId);
+      const fetchedAds = await fetchAds(filters);
       
       if (fetchedAds.length === 0) {
         toast.error('Nie znaleziono reklam dla tego ID');
@@ -46,7 +46,7 @@ const Index = () => {
       const analysis: StoredAnalysis = {
         timestamp: new Date().toISOString(),
         pageName: pageName,
-        pageId: submittedPageId,
+        pageId: filters.pageId,
         totalAds: fetchedAds.length,
         ads: fetchedAds
       };
@@ -73,13 +73,13 @@ const Index = () => {
 
   switch (appState) {
     case 'start':
-      return <StartScreen onSubmit={handlePageIdSubmit} />;
+      return <StartScreen onSubmit={handleFiltersSubmit} />;
     case 'loading':
       return <LoadingScreen />;
     case 'dashboard':
       return <Dashboard ads={ads} pageName={pageName} onBack={handleBack} />;
     default:
-      return <StartScreen onSubmit={handlePageIdSubmit} />;
+      return <StartScreen onSubmit={handleFiltersSubmit} />;
   }
 };
 
