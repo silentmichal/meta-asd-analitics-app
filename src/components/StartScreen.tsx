@@ -3,6 +3,7 @@ import { validateFacebookPageId } from '@/utils/adUtils';
 import { loadLastPageId, saveLastPageId } from '@/utils/localStorage';
 import { toast } from 'sonner';
 import { BeamsBackground } from '@/components/ui/beams-background';
+import { AnimatedText } from '@/components/ui/animated-underline-text-one';
 
 interface StartScreenProps {
   onSubmit: (pageId: string) => void;
@@ -50,12 +51,14 @@ export default function StartScreen({ onSubmit }: StartScreenProps) {
   return (
     <BeamsBackground intensity="medium">
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
-        {/* Main header with glow effect */}
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-12 text-white text-center">
-          <span className="inline-block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(147,51,234,0.5)]">
-            Analizuj Konkurencję
-          </span>
-        </h1>
+        {/* Main header with animated underline */}
+        <AnimatedText 
+          text="Analizuj Konkurencję"
+          textClassName="text-4xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-[0_0_30px_rgba(147,51,234,0.5)]"
+          underlineClassName="text-purple-400"
+          underlineDuration={1.5}
+          className="mb-12"
+        />
         
         <div className="w-full max-w-md">
           <div className="bg-white/5 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/10">
