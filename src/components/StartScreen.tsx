@@ -4,6 +4,7 @@ import { loadLastPageId, saveLastPageId } from '@/utils/localStorage';
 import { toast } from 'sonner';
 import { BeamsBackground } from '@/components/ui/beams-background';
 import { AnimatedText } from '@/components/ui/animated-underline-text-one';
+import { motion } from 'motion/react';
 
 interface StartScreenProps {
   onSubmit: (pageId: string) => void;
@@ -51,14 +52,33 @@ export default function StartScreen({ onSubmit }: StartScreenProps) {
   return (
     <BeamsBackground intensity="medium">
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
-        {/* Main header with animated underline */}
-        <AnimatedText 
-          text="Analizuj reklamy konkurencji"
-          textClassName="text-4xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-[0_0_30px_rgba(147,51,234,0.5)]"
-          underlineClassName="text-purple-400"
-          underlineDuration={1.5}
-          className="mb-12"
-        />
+        {/* Main header with animated underline only on "reklamy" */}
+        <div className="flex flex-col items-center justify-center gap-2 mb-12">
+          <div className="flex items-center gap-3">
+            <motion.span
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-[0_0_30px_rgba(147,51,234,0.5)]"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6 }}
+            >
+              Analizuj
+            </motion.span>
+            <AnimatedText 
+              text="reklamy"
+              textClassName="text-4xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-[0_0_30px_rgba(147,51,234,0.5)]"
+              underlineClassName="text-purple-400"
+              underlineDuration={1.5}
+            />
+            <motion.span
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-[0_0_30px_rgba(147,51,234,0.5)]"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              konkurencji
+            </motion.span>
+          </div>
+        </div>
         
         <div className="w-full max-w-md">
           <div className="bg-white/5 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/10">
