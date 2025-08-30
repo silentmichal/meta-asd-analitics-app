@@ -1,19 +1,17 @@
-import { Loader2 } from 'lucide-react';
 import { BeamsBackground } from '@/components/ui/beams-background';
+import { GooeyLoader } from '@/components/ui/loader-10';
 
 export default function LoadingScreen() {
   return (
     <BeamsBackground intensity="medium">
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
         <div className="text-center">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-32 h-32 border-4 border-primary/20 rounded-full" />
-            </div>
-            <div className="relative flex items-center justify-center">
-              <Loader2 className="w-32 h-32 text-primary animate-spin" />
-            </div>
-          </div>
+          <GooeyLoader
+            primaryColor="hsl(var(--primary))"
+            secondaryColor="hsl(var(--primary-glow))"
+            borderColor="hsl(var(--primary))"
+            className="scale-125"
+          />
           
           <div className="mt-8 space-y-2">
             <h2 className="text-2xl font-semibold text-white">
