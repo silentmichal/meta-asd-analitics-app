@@ -17,6 +17,13 @@
     --primary-foreground: 0 0% 100%;
     --primary-hover: 0 75% 60%;
     
+    /* Rainbow Colors */
+    --color-1: 0 100% 63%;
+    --color-2: 270 100% 63%;
+    --color-3: 210 100% 63%;
+    --color-4: 195 100% 63%;
+    --color-5: 90 100% 63%;
+    
     /* Secondary - Teal */
     --secondary: 176 42% 63%;
     --secondary-foreground: 0 0% 100%;
