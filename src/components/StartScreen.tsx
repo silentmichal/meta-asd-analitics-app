@@ -86,7 +86,7 @@ export default function StartScreen({ onSubmit }: StartScreenProps) {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="pageId" className="block text-sm font-medium mb-2 text-white/90">
-                  ID Strony Facebook
+                  Wklej ID strony Facebooka
                 </label>
                 <input
                   id="pageId"
@@ -96,7 +96,7 @@ export default function StartScreen({ onSubmit }: StartScreenProps) {
                     setPageId(e.target.value);
                     setError('');
                   }}
-                  placeholder="np. 12345678901234 lub nazwa-strony"
+                  placeholder="12345678901234"
                   className="w-full h-11 px-4 bg-black/20 backdrop-blur-sm border border-white/20 rounded-lg text-white placeholder:text-white/50 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-200"
                   disabled={isLoading}
                   autoComplete="off"
@@ -122,12 +122,6 @@ export default function StartScreen({ onSubmit }: StartScreenProps) {
                 )}
               </button>
             </form>
-            
-            <div className="mt-6 pt-6 border-t border-white/5">
-              <p className="text-xs text-white/40 text-center">
-                Pobierz i analizuj reklamy z Facebook Ads Library
-              </p>
-            </div>
           </div>
         </div>
       </div>
