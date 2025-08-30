@@ -59,6 +59,11 @@ export interface AdData {
     profilePicUrl?: string;
     image?: AdImage;
     images?: AdImage[]; // NEW - for MULTI_IMAGE type
+    video?: { // NEW - raw video data from API
+      hd_url: string | null;
+      sd_url: string | null;
+      preview_image_url: string | null;
+    };
     previewImageUrl?: string;
     videoUrls?: VideoUrls;
     cards?: AdCard[];

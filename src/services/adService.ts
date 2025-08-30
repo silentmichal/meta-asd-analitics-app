@@ -43,6 +43,15 @@ function parseAdData(item: any): AdData | null {
     }));
   }
 
+  // Convert VIDEO format from API to expected format
+  if (adInfo.adType === 'VIDEO' && adData.video) {
+    adData.videoUrls = {
+      hd: adData.video.hd_url,
+      sd: adData.video.sd_url
+    };
+    adData.previewImageUrl = adData.video.preview_image_url || null;
+  }
+
   return {
     success: adInfo.success,
     adType: adInfo.adType,
