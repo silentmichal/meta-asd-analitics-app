@@ -23,7 +23,7 @@ export default function AdCard({ ad }: AdCardProps) {
   );
 
   const typeIcon = hasVideo ? <Play className="w-3 h-3" /> :
-    (adType === 'CAROUSEL' || adType === 'MULTI_IMAGE' || adType === 'DCO')
+    (adType === 'CAROUSEL' || adType === 'MULTI_IMAGE' || adType === 'DCO' || adType === 'DPA')
       ? <Images className="w-3 h-3" />
       : null;
 
@@ -42,7 +42,7 @@ export default function AdCard({ ad }: AdCardProps) {
       const current = adData.cards[Math.min(selectedVersion, adData.cards.length - 1)];
       return <AdCardMedia card={current} typeIcon={typeIcon} />;
     }
-    if ((adType === 'CAROUSEL' || adType === 'MULTI_IMAGE') && adData.cards) {
+    if ((adType === 'CAROUSEL' || adType === 'MULTI_IMAGE' || adType === 'DPA') && adData.cards) {
       return <AdCardCarousel cards={adData.cards} typeIcon={typeIcon} />;
     }
     if (adType === 'VIDEO') {
@@ -94,7 +94,7 @@ export default function AdCard({ ad }: AdCardProps) {
 
         {renderMedia()}
 
-        {/* Przekazujemy linkDescription do CTA */}
+        {/* Przekazujemy linkDescription i caption do CTA */}
         <AdCardFooter 
           linkUrl={
             adType === 'DCO' && adData.cards 
@@ -115,6 +115,11 @@ export default function AdCard({ ad }: AdCardProps) {
             adType === 'DCO' && adData.cards
               ? adData.cards[Math.min(selectedVersion, adData.cards.length - 1)]?.linkDescription
               : (adData.linkDescription || adData.cards?.[0]?.linkDescription || undefined)
+          }
+          caption={
+            adType === 'DPA' && adData.cards
+              ? adData.cards[0]?.caption
+              : adData.caption
           }
         />
       </div>

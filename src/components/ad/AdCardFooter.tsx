@@ -6,9 +6,10 @@ interface AdCardFooterProps {
   ctaText?: string;
   title?: string;
   linkDescription?: string;
+  caption?: string;
 }
 
-export default function AdCardFooter({ linkUrl, ctaText, title, linkDescription }: AdCardFooterProps) {
+export default function AdCardFooter({ linkUrl, ctaText, title, linkDescription, caption }: AdCardFooterProps) {
   if (!linkUrl) return null;
 
   const domain = extractDomain(linkUrl);
@@ -28,7 +29,12 @@ export default function AdCardFooter({ linkUrl, ctaText, title, linkDescription 
         >
           <div className="flex items-center justify-between gap-3">
             <div className="flex-1 min-w-0">
-              {domain && (
+              {caption && (
+                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                  {caption}
+                </p>
+              )}
+              {!caption && domain && (
                 <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
                   {domain}
                 </p>

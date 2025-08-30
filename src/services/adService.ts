@@ -20,6 +20,7 @@ function parseAdData(item: any): AdData | null {
     if (adData.body) adData.body = decodeHtmlEntities(adData.body);
     if (adData.title) adData.title = decodeHtmlEntities(adData.title);
     if (adData.linkDescription) adData.linkDescription = decodeHtmlEntities(adData.linkDescription); // NEW
+    if (adData.caption) adData.caption = decodeHtmlEntities(adData.caption); // NEW - for DPA
 
   // Decode cards
   if (adData.cards && Array.isArray(adData.cards)) {
@@ -27,7 +28,8 @@ function parseAdData(item: any): AdData | null {
       ...card,
       title: decodeHtmlEntities(card.title),
       body: decodeHtmlEntities(card.body),
-      linkDescription: card.linkDescription ? decodeHtmlEntities(card.linkDescription) : card.linkDescription // NEW
+      linkDescription: card.linkDescription ? decodeHtmlEntities(card.linkDescription) : card.linkDescription, // NEW
+      caption: card.caption ? decodeHtmlEntities(card.caption) : card.caption // NEW - for DPA
     }));
   }
 

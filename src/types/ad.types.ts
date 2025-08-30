@@ -1,4 +1,4 @@
-export type AdType = 'IMAGE' | 'VIDEO' | 'CAROUSEL' | 'DCO' | 'MULTI_IMAGE';
+export type AdType = 'IMAGE' | 'VIDEO' | 'CAROUSEL' | 'DCO' | 'MULTI_IMAGE' | 'DPA';
 
 export interface AdImage {
   original_url: string;
@@ -19,6 +19,7 @@ export interface AdCard {
   linkUrl: string;
   ctaText: string;
   linkDescription?: string; // NEW
+  caption?: string; // NEW - for DPA
 }
 
 export interface AdBasicInfo {
@@ -55,6 +56,7 @@ export interface AdData {
     ctaText?: string;
     linkUrl?: string;
     linkDescription?: string; // NEW
+    caption?: string; // NEW - for DPA
     publisherPlatform: string;
     profilePicUrl?: string;
     image?: AdImage;
