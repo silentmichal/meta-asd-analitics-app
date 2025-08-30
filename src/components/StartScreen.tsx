@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Target } from 'lucide-react';
 import { validateFacebookPageId } from '@/utils/adUtils';
 import { loadLastPageId, saveLastPageId } from '@/utils/localStorage';
 import { toast } from 'sonner';
@@ -50,20 +49,16 @@ export default function StartScreen({ onSubmit }: StartScreenProps) {
 
   return (
     <BeamsBackground intensity="medium">
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
+        {/* Main header with glow effect */}
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-12 text-white text-center">
+          <span className="inline-block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(147,51,234,0.5)]">
+            Analizuj Konkurencję
+          </span>
+        </h1>
+        
         <div className="w-full max-w-md">
-          <div className="bg-black/30 backdrop-blur-xl rounded-3xl p-8 md:p-10 shadow-2xl border border-white/10">
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/20 rounded-full mb-6">
-                <Target className="w-10 h-10 text-primary" />
-              </div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-3 text-white">
-                Analizuj Konkurencję
-              </h1>
-              <p className="text-white/70">
-                Pobierz i analizuj reklamy z Facebook Ads Library
-              </p>
-            </div>
+          <div className="bg-white/5 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/10">
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -79,7 +74,7 @@ export default function StartScreen({ onSubmit }: StartScreenProps) {
                     setError('');
                   }}
                   placeholder="np. 12345678901234 lub nazwa-strony"
-                  className="input-base bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-primary"
+                  className="w-full h-11 px-4 bg-black/20 backdrop-blur-sm border border-white/20 rounded-lg text-white placeholder:text-white/50 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-200"
                   disabled={isLoading}
                   autoComplete="off"
                   autoFocus
@@ -92,11 +87,11 @@ export default function StartScreen({ onSubmit }: StartScreenProps) {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="btn-primary w-full h-14 text-base font-semibold bg-primary hover:bg-primary/90"
+                className="w-full h-12 px-6 bg-white text-black font-semibold rounded-lg transition-all duration-200 hover:bg-white/90 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center gap-2">
-                    <div className="spinner w-5 h-5 border-2" />
+                    <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
                     <span>Przetwarzanie...</span>
                   </div>
                 ) : (
@@ -105,9 +100,9 @@ export default function StartScreen({ onSubmit }: StartScreenProps) {
               </button>
             </form>
             
-            <div className="mt-8 pt-8 border-t border-white/10">
-              <p className="text-xs text-white/50 text-center">
-                Wprowadź ID strony Facebook lub jej nazwę użytkownika, aby pobrać wszystkie aktywne reklamy
+            <div className="mt-6 pt-6 border-t border-white/5">
+              <p className="text-xs text-white/40 text-center">
+                Pobierz i analizuj reklamy z Facebook Ads Library
               </p>
             </div>
           </div>
