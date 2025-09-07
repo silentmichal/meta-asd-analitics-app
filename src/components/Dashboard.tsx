@@ -4,6 +4,7 @@ import { AdData } from '@/types/ad.types';
 import AdCard from './AdCard';
 import Pagination from './Pagination';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -131,21 +132,22 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
                 </div>
               </div>
               
-              <button
+              <Button
                 onClick={() => setShowConfirmDialog(true)}
-                className="btn-primary flex items-center gap-2"
+                variant="outline"
+                className="border-primary/30 hover:border-primary hover:bg-primary/5 text-primary"
               >
                 <Bot className="w-5 h-5" />
                 <span>Rozpocznij analizę</span>
-              </button>
+              </Button>
             </div>
             
             {/* Statistics Row */}
             {stats && (
               <div className="flex flex-wrap gap-3 ml-14">
                 {/* Total Ads */}
-                <Badge variant="secondary" className="flex items-center gap-1.5 px-3 py-1.5">
-                  <BarChart3 className="w-4 h-4" />
+                <Badge variant="outline" className="flex items-center gap-1.5 px-3 py-1.5 border-primary/20">
+                  <BarChart3 className="w-4 h-4 text-primary" />
                   <span className="font-medium">{stats.totalAds}</span>
                   <span className="text-xs text-muted-foreground">
                     {stats.totalAds === 1 ? 'reklama' : 'reklam'}
@@ -154,8 +156,8 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
                 
                 {/* Date Range */}
                 {stats.dateRange && (
-                  <Badge variant="secondary" className="flex items-center gap-1.5 px-3 py-1.5">
-                    <Calendar className="w-4 h-4" />
+                  <Badge variant="outline" className="flex items-center gap-1.5 px-3 py-1.5 border-secondary/20">
+                    <Calendar className="w-4 h-4 text-secondary" />
                     <span className="text-xs">
                       {format(stats.dateRange.start, 'dd MMM yyyy', { locale: pl })} - 
                       {format(stats.dateRange.end, 'dd MMM yyyy', { locale: pl })}
@@ -165,8 +167,8 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
                 
                 {/* Platforms */}
                 {(stats.platformStats.facebook > 0 || stats.platformStats.instagram > 0) && (
-                  <Badge variant="secondary" className="flex items-center gap-1.5 px-3 py-1.5">
-                    <Globe className="w-4 h-4" />
+                  <Badge variant="outline" className="flex items-center gap-1.5 px-3 py-1.5 border-accent/20">
+                    <Globe className="w-4 h-4 text-accent" />
                     <div className="flex items-center gap-2 text-xs">
                       {stats.platformStats.facebook > 0 && (
                         <span>Facebook: {stats.platformStats.facebook}</span>
@@ -194,7 +196,7 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Anuluj</AlertDialogCancel>
-            <AlertDialogAction onClick={handleAnalyzeAI} className="btn-primary">
+            <AlertDialogAction onClick={handleAnalyzeAI} className="bg-primary hover:bg-primary/90 text-primary-foreground">
               Rozpocznij analizę
             </AlertDialogAction>
           </AlertDialogFooter>
