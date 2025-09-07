@@ -30,6 +30,35 @@ export interface AdCard {
   caption?: string; // NEW - for DPA
 }
 
+// New statistical data interfaces
+export interface TargetLocation {
+  name: string;
+  type: string;
+  excluded: boolean;
+}
+
+export interface ReachByLocation {
+  key: string;
+  value: number;
+}
+
+export interface BeneficiaryPayer {
+  payer: string;
+  beneficiary: string;
+}
+
+export interface AgeGenderBreakdown {
+  age_range: string;
+  male: number;
+  female: number;
+  unknown: number;
+}
+
+export interface CountryAgeGenderReach {
+  country: string;
+  age_gender_breakdowns: AgeGenderBreakdown[];
+}
+
 export interface AdBasicInfo {
   id: string;
   ad_snapshot_url: string;
@@ -49,6 +78,13 @@ export interface AdBasicInfo {
       previousNode: string;
     };
   };
+  // New statistical fields
+  target_gender?: string;
+  target_locations?: TargetLocation[];
+  total_reach_by_location?: ReachByLocation[];
+  eu_total_reach?: number;
+  beneficiary_payers?: BeneficiaryPayer[];
+  age_country_gender_reach_breakdown?: CountryAgeGenderReach[];
 }
 
 export interface AdData {

@@ -5,7 +5,10 @@ import AdCardFooter from './ad/AdCardFooter';
 import AdCardCarousel from './ad/AdCardCarousel';
 import DcoVersionBar from './ad/AdCardDCO';
 import AdCardMedia from './ad/AdCardMedia';
-import { Play, Images, ChevronDown, ChevronUp } from 'lucide-react';
+import AdStatisticsDialog from './AdStatisticsDialog';
+import { Play, Images, ChevronDown, ChevronUp, BarChart3 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface AdCardProps {
   ad: AdData;
@@ -17,6 +20,7 @@ export default function AdCard({ ad }: AdCardProps) {
   const [selectedVersion, setSelectedVersion] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showExpandButton, setShowExpandButton] = useState(false);
+  const [showStatistics, setShowStatistics] = useState(false);
   const textRef = useRef<HTMLParagraphElement>(null);
 
   const hasVideo = Boolean(
@@ -85,9 +89,41 @@ export default function AdCard({ ad }: AdCardProps) {
     return null;
   };
 
+  // Check if we have any statistical data
+  const hasStatistics = ad.basic && (
+    ad.basic.target_gender || 
+    ad.basic.target_locations || 
+    ad.basic.eu_total_reach || 
+    ad.basic.beneficiary_payers ||
+    ad.basic.age_country_gender_reach_breakdown
+  );
+
   return (
     <div>
-      <div className="fb-ad-card group">
+      <div className="fb-ad-card group relative">
+        {/* Statistics button */}
+        {hasStatistics && (
+          <div className="absolute top-3 right-3 z-10">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-primary"
+                    onClick={() => setShowStatistics(true)}
+                  >
+                    <BarChart3 className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Zobacz statystyki</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        )}
+
         <AdCardHeader 
           pageName={adData.pageName}
           profilePicUrl={adData.profilePicUrl}
@@ -167,6 +203,14 @@ export default function AdCard({ ad }: AdCardProps) {
           onSelect={setSelectedVersion}
         />
       )}
+
+      {/* Statistics Dialog */}
+      <AdStatisticsDialog
+        isOpen={showStatistics}
+        onClose={() => setShowStatistics(false)}
+        data={ad.basic}
+        pageName={adData.pageName}
+      />
     </div>
   );
 }
