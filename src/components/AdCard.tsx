@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { AdData } from '@/types/ad.types';
 import AdCardHeader from './ad/AdCardHeader';
 import AdCardFooter from './ad/AdCardFooter';
 import AdCardCarousel from './ad/AdCardCarousel';
 import DcoVersionBar from './ad/AdCardDCO';
 import AdCardMedia from './ad/AdCardMedia';
-import { Play, Images } from 'lucide-react';
+import { Play, Images, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface AdCardProps {
   ad: AdData;
@@ -15,6 +15,9 @@ export default function AdCard({ ad }: AdCardProps) {
   const { adType, adData } = ad;
 
   const [selectedVersion, setSelectedVersion] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showExpandButton, setShowExpandButton] = useState(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
 
   const hasVideo = Boolean(
     adType === 'VIDEO' ||
@@ -36,6 +39,16 @@ export default function AdCard({ ad }: AdCardProps) {
   } else {
     bodyText = adData.body || adData.cards?.[0]?.body || null;
   }
+
+  // Check if text is truncated when component mounts or bodyText changes
+  useEffect(() => {
+    if (textRef.current && bodyText) {
+      const element = textRef.current;
+      // Check if text overflows (is truncated)
+      const isTruncated = element.scrollHeight > element.clientHeight;
+      setShowExpandButton(isTruncated);
+    }
+  }, [bodyText, selectedVersion]);
 
   const renderMedia = () => {
     if (adType === 'DCO' && adData.cards && adData.cards.length > 0) {
@@ -86,9 +99,32 @@ export default function AdCard({ ad }: AdCardProps) {
 
         {bodyText && (
           <div className="px-3 sm:px-4 pb-3">
-            <p className="text-sm whitespace-pre-wrap line-clamp-3">
+            <p 
+              ref={textRef}
+              className={`text-sm whitespace-pre-wrap transition-all duration-300 ${
+                !isExpanded ? 'line-clamp-3' : ''
+              }`}
+            >
               {bodyText}
             </p>
+            {(showExpandButton || isExpanded) && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="mt-1 text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors duration-200 flex items-center gap-0.5"
+              >
+                {isExpanded ? (
+                  <>
+                    Pokaż mniej
+                    <ChevronUp className="w-3.5 h-3.5" />
+                  </>
+                ) : (
+                  <>
+                    Pokaż więcej
+                    <ChevronDown className="w-3.5 h-3.5" />
+                  </>
+                )}
+              </button>
+            )}
           </div>
         )}
 
