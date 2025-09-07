@@ -1,9 +1,23 @@
-import { useState, useEffect } from 'react';
-import { Bot, ArrowLeft } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Bot, ArrowLeft, Calendar, BarChart3, Globe } from 'lucide-react';
 import { AdData } from '@/types/ad.types';
 import AdCard from './AdCard';
 import Pagination from './Pagination';
 import { toast } from 'sonner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { format } from 'date-fns';
+import { pl } from 'date-fns/locale';
 
 interface DashboardProps {
   ads: AdData[];
@@ -16,8 +30,39 @@ const ADS_PER_PAGE = 12;
 export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [displayedAds, setDisplayedAds] = useState<AdData[]>([]);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   
   const totalPages = Math.ceil(ads.length / ADS_PER_PAGE);
+  
+  // Calculate statistics
+  const stats = useMemo(() => {
+    if (ads.length === 0) return null;
+    
+    // Get profile picture URL from first ad
+    const profilePicUrl = ads[0]?.adData?.profilePicUrl || null;
+    
+    // Calculate date range from basic info
+    const dates = ads
+      .map(ad => ad.basic?.ad_creation_time)
+      .filter(date => date)
+      .map(date => new Date(date).getTime());
+    
+    const minDate = dates.length > 0 ? new Date(Math.min(...dates)) : null;
+    const maxDate = dates.length > 0 ? new Date(Math.max(...dates)) : null;
+    
+    // Calculate platform stats
+    const platformStats = {
+      facebook: ads.filter(ad => ad.adData.publisherPlatform === 'Facebook').length,
+      instagram: ads.filter(ad => ad.adData.publisherPlatform === 'Instagram').length,
+    };
+    
+    return {
+      profilePicUrl,
+      dateRange: minDate && maxDate ? { start: minDate, end: maxDate } : null,
+      platformStats,
+      totalAds: ads.length
+    };
+  }, [ads]);
   
   useEffect(() => {
     const startIndex = (currentPage - 1) * ADS_PER_PAGE;
@@ -27,6 +72,8 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
   }, [currentPage, ads]);
   
   const handleAnalyzeAI = () => {
+    setShowConfirmDialog(false);
+    
     const analysisData = {
       pageName,
       totalAds: ads.length,
@@ -36,15 +83,12 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
         carousel: ads.filter(ad => ad.adType === 'CAROUSEL').length,
         dco: ads.filter(ad => ad.adType === 'DCO').length,
       },
-      platforms: {
-        facebook: ads.filter(ad => ad.adData.publisherPlatform === 'Facebook').length,
-        instagram: ads.filter(ad => ad.adData.publisherPlatform === 'Instagram').length,
-      },
+      platforms: stats?.platformStats || {},
       sample: ads.slice(0, 5)
     };
     
     console.log('AI Analysis Data:', analysisData);
-    toast.success('Dane przygotowane do analizy AI');
+    toast.success('Rozpoczęto analizę AI');
     
     setTimeout(() => {
       toast.info('Analiza AI zostanie wkrótce udostępniona');
@@ -56,32 +100,106 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
       {/* Header */}
       <header className="bg-card border-b border-border shadow-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={onBack}
-                className="p-2 rounded-lg hover:bg-muted transition-colors"
-                aria-label="Go back"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <div>
-                <h1 className="text-2xl font-bold">{pageName}</h1>
-                <p className="text-muted-foreground">
-                  {ads.length} {ads.length === 1 ? 'reklama' : 'reklam'} znalezionych
-                </p>
+          <div className="flex flex-col gap-4">
+            {/* Top Row */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={onBack}
+                  className="p-2 rounded-lg hover:bg-muted transition-colors"
+                  aria-label="Go back"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                
+                {/* Company Info with Logo */}
+                <div className="flex items-center gap-3">
+                  {stats?.profilePicUrl && (
+                    <Avatar className="h-10 w-10 border-2 border-border">
+                      <AvatarImage src={stats.profilePicUrl} alt={pageName} />
+                      <AvatarFallback className="bg-muted text-muted-foreground">
+                        {pageName.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
+                  <div>
+                    <h1 className="text-2xl font-bold">{pageName}</h1>
+                    <p className="text-sm text-muted-foreground">
+                      Analiza reklam Meta
+                    </p>
+                  </div>
+                </div>
               </div>
+              
+              <button
+                onClick={() => setShowConfirmDialog(true)}
+                className="btn-primary flex items-center gap-2"
+              >
+                <Bot className="w-5 h-5" />
+                <span>Rozpocznij analizę</span>
+              </button>
             </div>
-            <button
-              onClick={handleAnalyzeAI}
-              className="btn-primary flex items-center gap-2"
-            >
-              <Bot className="w-5 h-5" />
-              <span>Analizuj AI</span>
-            </button>
+            
+            {/* Statistics Row */}
+            {stats && (
+              <div className="flex flex-wrap gap-3 ml-14">
+                {/* Total Ads */}
+                <Badge variant="secondary" className="flex items-center gap-1.5 px-3 py-1.5">
+                  <BarChart3 className="w-4 h-4" />
+                  <span className="font-medium">{stats.totalAds}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {stats.totalAds === 1 ? 'reklama' : 'reklam'}
+                  </span>
+                </Badge>
+                
+                {/* Date Range */}
+                {stats.dateRange && (
+                  <Badge variant="secondary" className="flex items-center gap-1.5 px-3 py-1.5">
+                    <Calendar className="w-4 h-4" />
+                    <span className="text-xs">
+                      {format(stats.dateRange.start, 'dd MMM yyyy', { locale: pl })} - 
+                      {format(stats.dateRange.end, 'dd MMM yyyy', { locale: pl })}
+                    </span>
+                  </Badge>
+                )}
+                
+                {/* Platforms */}
+                {(stats.platformStats.facebook > 0 || stats.platformStats.instagram > 0) && (
+                  <Badge variant="secondary" className="flex items-center gap-1.5 px-3 py-1.5">
+                    <Globe className="w-4 h-4" />
+                    <div className="flex items-center gap-2 text-xs">
+                      {stats.platformStats.facebook > 0 && (
+                        <span>Facebook: {stats.platformStats.facebook}</span>
+                      )}
+                      {stats.platformStats.instagram > 0 && (
+                        <span>Instagram: {stats.platformStats.instagram}</span>
+                      )}
+                    </div>
+                  </Badge>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </header>
+      
+      {/* Confirmation Dialog */}
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Potwierdzenie analizy AI</AlertDialogTitle>
+            <AlertDialogDescription>
+              Czy na pewno chcesz rozpocząć analizę AI? Ta operacja wykorzysta zasoby systemowe i może potrwać kilka minut.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anuluj</AlertDialogCancel>
+            <AlertDialogAction onClick={handleAnalyzeAI} className="btn-primary">
+              Rozpocznij analizę
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
