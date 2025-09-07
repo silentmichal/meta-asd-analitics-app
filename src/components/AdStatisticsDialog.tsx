@@ -1,8 +1,8 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import { 
   Users, 
   MapPin, 
@@ -11,7 +11,8 @@ import {
   Globe,
   User,
   Flag,
-  BarChart3
+  BarChart3,
+  Target
 } from 'lucide-react';
 import { AdBasicInfo } from '@/types/ad.types';
 import { 
@@ -23,9 +24,6 @@ import {
   Tooltip, 
   Legend, 
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell
 } from 'recharts';
 
 interface AdStatisticsDialogProps {
@@ -78,14 +76,6 @@ export default function AdStatisticsDialog({
     }))
   ) || [];
 
-  // Prepare reach by location data for pie chart
-  const reachData = data.total_reach_by_location?.map(item => ({
-    name: item.key,
-    value: item.value
-  })) || [];
-
-  const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 'hsl(var(--muted))'];
-
   const getGenderBadge = (gender?: string) => {
     if (!gender) return null;
     
@@ -107,112 +97,119 @@ export default function AdStatisticsDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] p-0">
-        <DialogHeader className="px-6 pt-6">
+      <DialogContent className="max-w-3xl max-h-[90vh] p-0">
+        <DialogHeader className="px-6 pt-6 pb-4">
           <DialogTitle className="flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-primary" />
-            Statystyki reklamy - {pageName}
+            Statystyki reklamy
           </DialogTitle>
+          <p className="text-sm text-muted-foreground mt-1">{pageName}</p>
         </DialogHeader>
         
-        <Tabs defaultValue="general" className="w-full">
-          <TabsList className="w-full justify-start px-6 rounded-none border-b bg-background">
-            <TabsTrigger value="general">Ogólne</TabsTrigger>
-            {data.target_locations && <TabsTrigger value="targeting">Targetowanie</TabsTrigger>}
-            {data.age_country_gender_reach_breakdown && <TabsTrigger value="demographics">Demografia</TabsTrigger>}
-            {data.total_reach_by_location && <TabsTrigger value="reach">Zasięg</TabsTrigger>}
-            {data.beneficiary_payers && <TabsTrigger value="payer">Płatnik</TabsTrigger>}
-          </TabsList>
-
-          <ScrollArea className="h-[calc(90vh-140px)]">
-            <div className="p-6">
-              <TabsContent value="general" className="mt-0 space-y-4">
-                <div className="grid gap-4 md:grid-cols-2">
-                  {data.target_gender && (
-                    <Card>
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-sm font-medium">Płeć docelowa</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {getGenderBadge(data.target_gender)}
+        <ScrollArea className="h-[calc(90vh-100px)]">
+          <div className="px-6 pb-6 space-y-4">
+            {/* Key Metrics Section */}
+            {(data.eu_total_reach !== undefined || data.target_gender || data.target_locations) && (
+              <>
+                <div className="grid gap-3 md:grid-cols-3">
+                  {data.eu_total_reach !== undefined && (
+                    <Card className="border-primary/20">
+                      <CardContent className="pt-4 pb-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Zasięg</p>
+                            <p className="text-xl font-bold text-primary">
+                              {data.eu_total_reach.toLocaleString('pl-PL')}
+                            </p>
+                          </div>
+                          <TrendingUp className="w-8 h-8 text-primary/20" />
+                        </div>
                       </CardContent>
                     </Card>
                   )}
                   
-                  {data.eu_total_reach !== undefined && (
-                    <Card>
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-sm font-medium flex items-center gap-2">
-                          <Globe className="w-4 h-4 text-accent" />
-                          Zasięg w UE
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-2xl font-bold text-primary">
-                          {data.eu_total_reach.toLocaleString('pl-PL')}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          szacowany całkowity zasięg
-                        </p>
+                  {data.target_gender && (
+                    <Card className="border-secondary/20">
+                      <CardContent className="pt-4 pb-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Płeć docelowa</p>
+                            {getGenderBadge(data.target_gender)}
+                          </div>
+                          <Users className="w-8 h-8 text-secondary/20" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                  
+                  {data.target_locations && (
+                    <Card className="border-accent/20">
+                      <CardContent className="pt-4 pb-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Lokalizacje</p>
+                            <p className="text-xl font-bold text-accent">
+                              {data.target_locations.length}
+                            </p>
+                          </div>
+                          <Target className="w-8 h-8 text-accent/20" />
+                        </div>
                       </CardContent>
                     </Card>
                   )}
                 </div>
-              </TabsContent>
+                
+                {(data.target_locations || data.age_country_gender_reach_breakdown || data.total_reach_by_location || data.beneficiary_payers) && (
+                  <Separator className="my-4" />
+                )}
+              </>
+            )}
 
-              {data.target_locations && (
-                <TabsContent value="targeting" className="mt-0 space-y-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-primary" />
-                        Lokalizacje targetowania
-                      </CardTitle>
-                      <CardDescription>
-                        Lista krajów i regionów objętych kampanią
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        {data.target_locations.map((location, index) => (
-                          <div 
-                            key={index}
-                            className="flex items-center justify-between p-3 rounded-lg border bg-card"
-                          >
-                            <div className="flex items-center gap-2">
-                              <Flag className="w-4 h-4 text-muted-foreground" />
-                              <span className="font-medium">{location.name}</span>
-                              <Badge variant="outline" className="text-xs">
-                                {location.type}
-                              </Badge>
-                            </div>
-                            {location.excluded && (
-                              <Badge variant="destructive" className="text-xs">
-                                Wykluczona
-                              </Badge>
-                            )}
-                          </div>
-                        ))}
+            {/* Target Locations */}
+            {data.target_locations && data.target_locations.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <MapPin className="w-4 h-4 text-primary" />
+                  Lokalizacje targetowania
+                </div>
+                <div className="grid gap-2 md:grid-cols-2">
+                  {data.target_locations.map((location, index) => (
+                    <div 
+                      key={index}
+                      className="flex items-center justify-between p-2.5 rounded-lg border bg-card/50 text-sm"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Flag className="w-3 h-3 text-muted-foreground" />
+                        <span className="font-medium">{location.name}</span>
+                        <Badge variant="outline" className="text-xs py-0 h-5">
+                          {location.type}
+                        </Badge>
                       </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              )}
+                      {location.excluded && (
+                        <Badge variant="destructive" className="text-xs py-0 h-5">
+                          Wykluczona
+                        </Badge>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
-              {data.age_country_gender_reach_breakdown && demographicData.length > 0 && (
-                <TabsContent value="demographics" className="mt-0 space-y-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-secondary" />
-                        Rozbicie demograficzne
-                      </CardTitle>
-                      <CardDescription>
-                        Zasięg według wieku i płci w poszczególnych krajach
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ResponsiveContainer width="100%" height={400}>
+            {/* Demographics Chart */}
+            {data.age_country_gender_reach_breakdown && demographicData.length > 0 && (
+              <>
+                {(data.target_locations || data.beneficiary_payers || data.total_reach_by_location) && (
+                  <Separator className="my-4" />
+                )}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm font-medium">
+                    <Users className="w-4 h-4 text-secondary" />
+                    Demografia
+                  </div>
+                  <Card className="border-secondary/20">
+                    <CardContent className="pt-4">
+                      <ResponsiveContainer width="100%" height={250}>
                         <BarChart data={demographicData}>
                           <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                           <XAxis dataKey="age" className="text-xs" />
@@ -232,97 +229,76 @@ export default function AdStatisticsDialog({
                       </ResponsiveContainer>
                     </CardContent>
                   </Card>
-                </TabsContent>
-              )}
+                </div>
+              </>
+            )}
 
-              {data.total_reach_by_location && reachData.length > 0 && (
-                <TabsContent value="reach" className="mt-0 space-y-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4 text-accent" />
-                        Zasięg według lokalizacji
-                      </CardTitle>
-                      <CardDescription>
-                        Rozkład zasięgu w poszczególnych regionach
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ResponsiveContainer width="100%" height={300}>
-                        <PieChart>
-                          <Pie
-                            data={reachData}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                            outerRadius={80}
-                            fill="hsl(var(--primary))"
-                            dataKey="value"
-                          >
-                            {reachData.map((_, index) => (
-                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
-                          </Pie>
-                          <Tooltip />
-                        </PieChart>
-                      </ResponsiveContainer>
+            {/* Reach by Location */}
+            {data.total_reach_by_location && data.total_reach_by_location.length > 0 && (
+              <>
+                {(data.target_locations || data.age_country_gender_reach_breakdown || data.beneficiary_payers) && (
+                  <Separator className="my-4" />
+                )}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm font-medium">
+                    <Globe className="w-4 h-4 text-accent" />
+                    Rozkład zasięgu
+                  </div>
+                  <div className="grid gap-2">
+                    {data.total_reach_by_location.map((item, index) => {
+                      const total = data.total_reach_by_location!.reduce((sum, i) => sum + i.value, 0);
+                      const percentage = ((item.value / total) * 100).toFixed(1);
                       
-                      <div className="mt-4 space-y-2">
-                        {data.total_reach_by_location.map((item, index) => (
-                          <div 
-                            key={index}
-                            className="flex items-center justify-between p-2 rounded-lg border"
-                          >
+                      return (
+                        <div 
+                          key={index}
+                          className="flex items-center justify-between p-2.5 rounded-lg border bg-card/50"
+                        >
+                          <div className="flex items-center gap-2">
                             <span className="text-sm font-medium">{item.key}</span>
-                            <Badge variant="outline">
-                              {item.value.toLocaleString('pl-PL')}
+                            <Badge variant="outline" className="text-xs py-0 h-5">
+                              {percentage}%
                             </Badge>
                           </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              )}
+                          <span className="text-sm text-muted-foreground">
+                            {item.value.toLocaleString('pl-PL')}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            )}
 
-              {data.beneficiary_payers && (
-                <TabsContent value="payer" className="mt-0 space-y-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Building2 className="w-4 h-4 text-primary" />
-                        Informacje o płatniku
-                      </CardTitle>
-                      <CardDescription>
-                        Kto faktycznie opłaca kampanię reklamową
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        {data.beneficiary_payers.map((item, index) => (
-                          <div 
-                            key={index}
-                            className="p-4 rounded-lg border bg-card space-y-2"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm text-muted-foreground">Płatnik:</span>
-                              <span className="font-medium">{item.payer}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm text-muted-foreground">Beneficjent:</span>
-                              <span className="font-medium">{item.beneficiary}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              )}
-            </div>
-          </ScrollArea>
-        </Tabs>
+            {/* Payer Information */}
+            {data.beneficiary_payers && data.beneficiary_payers.length > 0 && (
+              <>
+                <Separator className="my-4" />
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm font-medium">
+                    <Building2 className="w-4 h-4 text-primary" />
+                    Płatnik
+                  </div>
+                  {data.beneficiary_payers.map((item, index) => (
+                    <Card key={index} className="border-primary/20">
+                      <CardContent className="pt-4 pb-3 space-y-2">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">Płatnik:</span>
+                          <span className="font-medium">{item.payer}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">Beneficjent:</span>
+                          <span className="font-medium">{item.beneficiary}</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
