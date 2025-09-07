@@ -5,12 +5,6 @@ const LAST_PAGE_ID_KEY = 'lastPageId';
 
 export function saveAnalysis(analysis: StoredAnalysis): void {
   try {
-    // Debug logging when saving
-    console.log('Saving to localStorage:', {
-      adsCount: analysis.ads?.length,
-      firstAdHasBasic: analysis.ads?.[0]?.basic ? 'yes' : 'no',
-      basicStructure: analysis.ads?.[0]?.basic
-    });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(analysis));
   } catch (error) {
     console.error('Failed to save analysis to localStorage:', error);
@@ -20,17 +14,7 @@ export function saveAnalysis(analysis: StoredAnalysis): void {
 export function loadAnalysis(): StoredAnalysis | null {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      // Debug logging when loading
-      console.log('Loading from localStorage:', {
-        adsCount: parsed.ads?.length,
-        firstAdHasBasic: parsed.ads?.[0]?.basic ? 'yes' : 'no', 
-        basicStructure: parsed.ads?.[0]?.basic
-      });
-      return parsed;
-    }
-    return null;
+    return stored ? JSON.parse(stored) : null;
   } catch (error) {
     console.error('Failed to load analysis from localStorage:', error);
     return null;

@@ -11,13 +11,6 @@ function decodeHtmlEntities(text: string | null | undefined): string {
 // Parse single ad data
 function parseAdData(item: any): AdData | null {
   try {
-    // Debug logging for raw API data
-    console.log('Raw item from API:', item);
-    console.log('Has basic field:', !!item.basic);
-    if (item.basic) {
-      console.log('Basic field structure:', item.basic);
-    }
-    
     const adInfo = item.details || item;
     if (!adInfo.success) return null;
 
