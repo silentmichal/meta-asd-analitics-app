@@ -1,5 +1,5 @@
 import { formatPlatform, formatDateRange, getPlatformIconName } from '@/utils/adUtils';
-import { Facebook, Instagram, MessageCircle, Globe } from 'lucide-react';
+import { Facebook, Instagram, MessageCircle, Globe, AtSign } from 'lucide-react';
 
 interface AdCardHeaderProps {
   pageName: string;
@@ -14,7 +14,8 @@ const platformIcons: { [key: string]: any } = {
   'Facebook': Facebook,
   'Instagram': Instagram,
   'MessageCircle': MessageCircle,
-  'Globe': Globe
+  'Globe': Globe,
+  'AtSign': AtSign
 };
 
 export default function AdCardHeader({ 

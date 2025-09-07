@@ -81,7 +81,8 @@ export function formatPlatform(platform: string): string {
     'facebook': 'Facebook',
     'instagram': 'Instagram',
     'messenger': 'Messenger',
-    'audience_network': 'Audience Network'
+    'audience_network': 'Audience Network',
+    'threads': 'Threads'
   };
   
   return platformMap[platform.toLowerCase()] || platform;
@@ -120,7 +121,8 @@ export function getPlatformIconName(platform: string): string {
     'facebook': 'Facebook',
     'instagram': 'Instagram', 
     'messenger': 'MessageCircle',
-    'audience_network': 'Globe'
+    'audience_network': 'Globe',
+    'threads': 'AtSign'
   };
   
   return iconMap[platform.toLowerCase()] || 'Globe';
