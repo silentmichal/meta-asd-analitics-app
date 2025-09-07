@@ -5,7 +5,6 @@ import AdCard from './AdCard';
 import Pagination from './Pagination';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { MagnetizeButton } from '@/components/ui/magnetize-button';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -133,16 +132,14 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
                 </div>
               </div>
               
-              <MagnetizeButton
+              <Button
                 onClick={() => setShowConfirmDialog(true)}
                 variant="outline"
                 className="border-primary/30 hover:border-primary hover:bg-primary/5 text-primary"
-                particleCount={14}
-                attractRadius={50}
               >
                 <Bot className="w-5 h-5" />
                 <span>Rozpocznij analizę</span>
-              </MagnetizeButton>
+              </Button>
             </div>
             
             {/* Statistics Row */}
