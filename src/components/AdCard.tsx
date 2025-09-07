@@ -79,9 +79,9 @@ export default function AdCard({ ad }: AdCardProps) {
           pageName={adData.pageName}
           profilePicUrl={adData.profilePicUrl}
           platform={adData.publisherPlatform}
-          platforms={ad.basic?.json.publisher_platforms}
-          startDate={ad.basic?.json.ad_delivery_start_time}
-          endDate={ad.basic?.json.ad_delivery_stop_time}
+          platforms={ad.basic?.json?.publisher_platforms}
+          startDate={ad.basic?.json?.ad_delivery_start_time}
+          endDate={ad.basic?.json?.ad_delivery_stop_time}
         />
 
         {bodyText && (
