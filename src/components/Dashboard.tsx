@@ -1,8 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Bot, ArrowLeft, Calendar, BarChart3, Globe } from 'lucide-react';
+import { Bot, ArrowLeft, Calendar, BarChart3, Globe, FileText } from 'lucide-react';
 import { AdData } from '@/types/ad.types';
+import { StrategicReportData } from '@/types/strategic-report.types';
 import AdCard from './AdCard';
 import Pagination from './Pagination';
+import StrategicReport from './StrategicReport';
+import { generateMockReportData } from '@/utils/mockReportData';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,6 +35,8 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [displayedAds, setDisplayedAds] = useState<AdData[]>([]);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showReport, setShowReport] = useState(false);
+  const [reportData, setReportData] = useState<StrategicReportData | null>(null);
   
   const totalPages = Math.ceil(ads.length / ADS_PER_PAGE);
   
@@ -75,26 +80,26 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
   const handleAnalyzeAI = () => {
     setShowConfirmDialog(false);
     
-    const analysisData = {
-      pageName,
-      totalAds: ads.length,
-      adTypes: {
-        image: ads.filter(ad => ad.adType === 'IMAGE').length,
-        video: ads.filter(ad => ad.adType === 'VIDEO').length,
-        carousel: ads.filter(ad => ad.adType === 'CAROUSEL').length,
-        dco: ads.filter(ad => ad.adType === 'DCO').length,
-      },
-      platforms: stats?.platformStats || {},
-      sample: ads.slice(0, 5)
-    };
+    toast.loading('Generowanie raportu strategicznego...', { id: 'report-generation' });
     
-    console.log('AI Analysis Data:', analysisData);
-    toast.success('Rozpoczęto analizę AI');
-    
+    // Simulate API call delay
     setTimeout(() => {
-      toast.info('Analiza AI zostanie wkrótce udostępniona');
-    }, 1000);
+      const report = generateMockReportData(ads);
+      setReportData(report);
+      setShowReport(true);
+      toast.success('Raport strategiczny został wygenerowany!', { id: 'report-generation' });
+    }, 2000);
   };
+
+  const handleBackFromReport = () => {
+    setShowReport(false);
+    setReportData(null);
+  };
+
+  // Show report if generated
+  if (showReport && reportData) {
+    return <StrategicReport data={reportData} onBack={handleBackFromReport} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -132,14 +137,16 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
                 </div>
               </div>
               
-              <Button
-                onClick={() => setShowConfirmDialog(true)}
-                variant="outline"
-                className="border-primary/30 hover:border-primary hover:bg-primary/5 text-primary"
-              >
-                <Bot className="w-5 h-5" />
-                <span>Rozpocznij analizę</span>
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setShowConfirmDialog(true)}
+                  variant="outline"
+                  className="border-primary/30 hover:border-primary hover:bg-primary/5 text-primary"
+                >
+                  <FileText className="w-5 h-5" />
+                  <span>Raport strategiczny</span>
+                </Button>
+              </div>
             </div>
             
             {/* Statistics Row */}
@@ -189,15 +196,16 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Potwierdzenie analizy AI</AlertDialogTitle>
+            <AlertDialogTitle>Generowanie raportu strategicznego</AlertDialogTitle>
             <AlertDialogDescription>
-              Czy na pewno chcesz rozpocząć analizę AI? Ta operacja wykorzysta zasoby systemowe i może potrwać kilka minut.
+              Czy chcesz wygenerować szczegółowy raport strategiczny na podstawie analizy {ads.length} reklam? 
+              Raport zawiera analizę demograficzną, anatomię przekazu oraz rekomendacje taktyczne.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Anuluj</AlertDialogCancel>
             <AlertDialogAction onClick={handleAnalyzeAI} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              Rozpocznij analizę
+              Generuj raport
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
