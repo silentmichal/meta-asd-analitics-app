@@ -335,102 +335,150 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
             Customer Journey - Lejek Sprzedażowy
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* ToFu */}
-            <Card className="relative overflow-hidden border-2 hover:shadow-lg transition-all">
-              <CardHeader className="bg-gradient-to-br from-blue-500/10 to-transparent">
-                <CardTitle className="flex items-center gap-2">
-                  <Megaphone className="h-5 w-5" />
-                  Top of Funnel (ToFu)
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-2">Narzędzia:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {data.customerJourney.ToFu.usedTools.length > 0 ? (
-                        data.customerJourney.ToFu.usedTools.map((tool, idx) => (
-                          <Badge key={idx} variant="secondary">{tool}</Badge>
-                        ))
-                      ) : (
-                        <span className="text-muted-foreground italic">Brak danych</span>
-                      )}
+          <div className="max-w-4xl mx-auto">
+            {/* ToFu - Top of Funnel */}
+            <div className="relative">
+              <Card className="relative overflow-hidden border-2 border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent hover:shadow-xl transition-all">
+                <CardContent className="p-8">
+                  <div className="flex items-start gap-6">
+                    <div className="flex-shrink-0 h-14 w-14 rounded-full bg-blue-500/10 flex items-center justify-center">
+                      <Megaphone className="h-7 w-7 text-blue-500" />
+                    </div>
+                    <div className="flex-grow">
+                      <h3 className="text-2xl font-bold mb-1 text-blue-600 dark:text-blue-400">
+                        Top of Funnel (ToFu) - Świadomość
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-4">Przyciąganie uwagi i budowanie świadomości marki</p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground mb-2">Wykorzystywane narzędzia:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {data.customerJourney.ToFu.usedTools.length > 0 ? (
+                              data.customerJourney.ToFu.usedTools.map((tool, idx) => (
+                                <Badge key={idx} variant="outline" className="bg-blue-500/10 border-blue-500/30">
+                                  {tool}
+                                </Badge>
+                              ))
+                            ) : (
+                              <span className="text-muted-foreground italic text-sm">Brak danych</span>
+                            )}
+                          </div>
+                        </div>
+                        {data.customerJourney.ToFu.mainMessage && (
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground mb-2">Główny przekaz:</p>
+                            <p className="font-medium italic">"{data.customerJourney.ToFu.mainMessage}"</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  {data.customerJourney.ToFu.mainMessage && (
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-2">Główny przekaz:</p>
-                      <p className="font-medium">{data.customerJourney.ToFu.mainMessage}</p>
-                    </div>
-                  )}
+                </CardContent>
+              </Card>
+              
+              {/* Arrow down */}
+              <div className="flex justify-center -mt-2 relative z-10">
+                <div className="bg-gradient-to-b from-blue-500/20 to-purple-500/20 p-2 rounded-full">
+                  <ArrowRight className="h-6 w-6 rotate-90 text-muted-foreground" />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            {/* MoFu */}
-            <Card className="relative overflow-hidden border-2 hover:shadow-lg transition-all">
-              <CardHeader className="bg-gradient-to-br from-purple-500/10 to-transparent">
-                <CardTitle className="flex items-center gap-2">
-                  <UserCheck className="h-5 w-5" />
-                  Middle of Funnel (MoFu)
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-2">Narzędzia:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {data.customerJourney.MoFu.usedTools.length > 0 ? (
-                        data.customerJourney.MoFu.usedTools.map((tool, idx) => (
-                          <Badge key={idx} variant="secondary">{tool}</Badge>
-                        ))
-                      ) : (
-                        <span className="text-muted-foreground italic">Brak danych</span>
-                      )}
+            {/* MoFu - Middle of Funnel */}
+            <div className="relative -mt-2">
+              <div className="mx-auto" style={{ width: '90%' }}>
+                <Card className="relative overflow-hidden border-2 border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-transparent hover:shadow-xl transition-all">
+                  <CardContent className="p-8">
+                    <div className="flex items-start gap-6">
+                      <div className="flex-shrink-0 h-14 w-14 rounded-full bg-purple-500/10 flex items-center justify-center">
+                        <UserCheck className="h-7 w-7 text-purple-500" />
+                      </div>
+                      <div className="flex-grow">
+                        <h3 className="text-2xl font-bold mb-1 text-purple-600 dark:text-purple-400">
+                          Middle of Funnel (MoFu) - Zainteresowanie
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-4">Edukacja i budowanie relacji z potencjalnymi klientami</p>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground mb-2">Wykorzystywane narzędzia:</p>
+                            <div className="flex flex-wrap gap-2">
+                              {data.customerJourney.MoFu.usedTools.length > 0 ? (
+                                data.customerJourney.MoFu.usedTools.map((tool, idx) => (
+                                  <Badge key={idx} variant="outline" className="bg-purple-500/10 border-purple-500/30">
+                                    {tool}
+                                  </Badge>
+                                ))
+                              ) : (
+                                <span className="text-muted-foreground italic text-sm">Brak danych</span>
+                              )}
+                            </div>
+                          </div>
+                          {data.customerJourney.MoFu.mainMessage && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground mb-2">Główny przekaz:</p>
+                              <p className="font-medium italic">"{data.customerJourney.MoFu.mainMessage}"</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  {data.customerJourney.MoFu.mainMessage && (
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-2">Główny przekaz:</p>
-                      <p className="font-medium">{data.customerJourney.MoFu.mainMessage}</p>
-                    </div>
-                  )}
+                  </CardContent>
+                </Card>
+              </div>
+              
+              {/* Arrow down */}
+              <div className="flex justify-center -mt-2 relative z-10">
+                <div className="bg-gradient-to-b from-purple-500/20 to-green-500/20 p-2 rounded-full">
+                  <ArrowRight className="h-6 w-6 rotate-90 text-muted-foreground" />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            {/* BoFu */}
-            <Card className="relative overflow-hidden border-2 hover:shadow-lg transition-all">
-              <CardHeader className="bg-gradient-to-br from-green-500/10 to-transparent">
-                <CardTitle className="flex items-center gap-2">
-                  <ShoppingCart className="h-5 w-5" />
-                  Bottom of Funnel (BoFu)
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-2">Narzędzia:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {data.customerJourney.BoFu.usedTools.length > 0 ? (
-                        data.customerJourney.BoFu.usedTools.map((tool, idx) => (
-                          <Badge key={idx} variant="secondary">{tool}</Badge>
-                        ))
-                      ) : (
-                        <span className="text-muted-foreground italic">Brak danych</span>
-                      )}
+            {/* BoFu - Bottom of Funnel */}
+            <div className="relative -mt-2">
+              <div className="mx-auto" style={{ width: '75%' }}>
+                <Card className="relative overflow-hidden border-2 border-green-500/20 bg-gradient-to-br from-green-500/5 to-transparent hover:shadow-xl transition-all">
+                  <CardContent className="p-8">
+                    <div className="flex items-start gap-6">
+                      <div className="flex-shrink-0 h-14 w-14 rounded-full bg-green-500/10 flex items-center justify-center">
+                        <ShoppingCart className="h-7 w-7 text-green-500" />
+                      </div>
+                      <div className="flex-grow">
+                        <h3 className="text-2xl font-bold mb-1 text-green-600 dark:text-green-400">
+                          Bottom of Funnel (BoFu) - Konwersja
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-4">Finalizacja sprzedaży i przekształcenie w klientów</p>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground mb-2">Wykorzystywane narzędzia:</p>
+                            <div className="flex flex-wrap gap-2">
+                              {data.customerJourney.BoFu.usedTools.length > 0 ? (
+                                data.customerJourney.BoFu.usedTools.map((tool, idx) => (
+                                  <Badge key={idx} variant="outline" className="bg-green-500/10 border-green-500/30">
+                                    {tool}
+                                  </Badge>
+                                ))
+                              ) : (
+                                <span className="text-muted-foreground italic text-sm">Brak danych</span>
+                              )}
+                            </div>
+                          </div>
+                          {data.customerJourney.BoFu.mainMessage && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground mb-2">Główny przekaz:</p>
+                              <p className="font-medium italic">"{data.customerJourney.BoFu.mainMessage}"</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  {data.customerJourney.BoFu.mainMessage && (
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-2">Główny przekaz:</p>
-                      <p className="font-medium">{data.customerJourney.BoFu.mainMessage}</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </div>
         </section>
 
