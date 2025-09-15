@@ -182,18 +182,6 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high':
-        return 'border-red-300 bg-red-50';
-      case 'medium':
-        return 'border-yellow-300 bg-yellow-50';
-      case 'low':
-        return 'border-green-300 bg-green-50';
-      default:
-        return 'border-gray-300 bg-gray-50';
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -695,7 +683,7 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
           <div className="space-y-8">
             {(data.competitivePositioning?.opportunities || data.competitiveOpportunities || []).map((opportunity, idx) => (
               <div key={idx} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card className={`${getPriorityColor(opportunity.priority)} border-2`}>
+                <Card className="border-2 border-muted">
                   <CardHeader className="pb-4">
                     <CardTitle className="text-xl flex items-center gap-2">
                       <Search className="h-5 w-5" />
@@ -716,21 +704,6 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
                   </CardHeader>
                   <CardContent>
                     <p className="text-lg font-medium">{opportunity.recommendation}</p>
-                    {opportunity.priority === 'high' && (
-                      <Badge variant="destructive" className="mt-4">
-                        Wysoki Priorytet
-                      </Badge>
-                    )}
-                    {opportunity.priority === 'medium' && (
-                      <Badge variant="secondary" className="mt-4">
-                        Średni Priorytet
-                      </Badge>
-                    )}
-                    {opportunity.priority === 'low' && (
-                      <Badge variant="outline" className="mt-4">
-                        Niski Priorytet
-                      </Badge>
-                    )}
                   </CardContent>
                 </Card>
               </div>

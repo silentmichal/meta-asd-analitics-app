@@ -197,17 +197,14 @@ export const generateMockReportData = (ads: AdData[]): StrategicReportData => {
       {
         weakness: 'Brak personalizacji w komunikacji - ten sam przekaz dla wszystkich',
         recommendation: 'Stwórz spersonalizowane warianty reklam dla każdej grupy wiekowej.',
-        priority: 'high' as const,
       },
       {
         weakness: 'Ignorowanie potencjału remarketingu',
         recommendation: 'Zbuduj rozbudowany funnel remarketingowy z różnymi komunikatami.',
-        priority: 'high' as const,
       },
       {
         weakness: 'Słabe wykorzystanie social proof',
         recommendation: 'Zbieraj i eksponuj opinie zadowolonych klientów.',
-        priority: 'medium' as const,
       },
     ],
   };

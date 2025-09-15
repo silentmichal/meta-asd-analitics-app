@@ -96,13 +96,11 @@ export interface TacticalPlay {
 export interface AdHook {
   hookText: string;
   referenceUrl: string;
-  effectiveness?: number;
 }
 
 export interface CompetitiveOpportunity {
   weakness: string;
   recommendation: string;
-  priority: 'high' | 'medium' | 'low';
 }
 
 export interface KeyMetrics {
