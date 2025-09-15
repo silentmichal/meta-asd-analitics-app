@@ -11,7 +11,11 @@ import {
   Rocket,
   Zap,
   TestTube,
-  BarChart3
+  BarChart3,
+  Megaphone,
+  UserCheck,
+  ShoppingCart,
+  ArrowRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -134,10 +138,10 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
   };
 
   const formatChartData = {
-    labels: data.distributionAndFormats.formatsChartData.labels,
+    labels: data.distributionAndFormats.formatsChartData.map(item => item.label),
     datasets: [
       {
-        data: data.distributionAndFormats.formatsChartData.data,
+        data: data.distributionAndFormats.formatsChartData.map(item => item.value),
         backgroundColor: [
           'hsl(220 70% 50%)',    // Bright blue
           'hsl(280 70% 50%)',    // Purple
@@ -325,6 +329,111 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
           </Card>
         </section>
 
+        {/* Customer Journey */}
+        <section>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-10">
+            Customer Journey - Lejek Sprzedażowy
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* ToFu */}
+            <Card className="relative overflow-hidden border-2 hover:shadow-lg transition-all">
+              <CardHeader className="bg-gradient-to-br from-blue-500/10 to-transparent">
+                <CardTitle className="flex items-center gap-2">
+                  <Megaphone className="h-5 w-5" />
+                  Top of Funnel (ToFu)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">Narzędzia:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {data.customerJourney.ToFu.usedTools.length > 0 ? (
+                        data.customerJourney.ToFu.usedTools.map((tool, idx) => (
+                          <Badge key={idx} variant="secondary">{tool}</Badge>
+                        ))
+                      ) : (
+                        <span className="text-muted-foreground italic">Brak danych</span>
+                      )}
+                    </div>
+                  </div>
+                  {data.customerJourney.ToFu.mainMessage && (
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-2">Główny przekaz:</p>
+                      <p className="font-medium">{data.customerJourney.ToFu.mainMessage}</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* MoFu */}
+            <Card className="relative overflow-hidden border-2 hover:shadow-lg transition-all">
+              <CardHeader className="bg-gradient-to-br from-purple-500/10 to-transparent">
+                <CardTitle className="flex items-center gap-2">
+                  <UserCheck className="h-5 w-5" />
+                  Middle of Funnel (MoFu)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">Narzędzia:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {data.customerJourney.MoFu.usedTools.length > 0 ? (
+                        data.customerJourney.MoFu.usedTools.map((tool, idx) => (
+                          <Badge key={idx} variant="secondary">{tool}</Badge>
+                        ))
+                      ) : (
+                        <span className="text-muted-foreground italic">Brak danych</span>
+                      )}
+                    </div>
+                  </div>
+                  {data.customerJourney.MoFu.mainMessage && (
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-2">Główny przekaz:</p>
+                      <p className="font-medium">{data.customerJourney.MoFu.mainMessage}</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* BoFu */}
+            <Card className="relative overflow-hidden border-2 hover:shadow-lg transition-all">
+              <CardHeader className="bg-gradient-to-br from-green-500/10 to-transparent">
+                <CardTitle className="flex items-center gap-2">
+                  <ShoppingCart className="h-5 w-5" />
+                  Bottom of Funnel (BoFu)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">Narzędzia:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {data.customerJourney.BoFu.usedTools.length > 0 ? (
+                        data.customerJourney.BoFu.usedTools.map((tool, idx) => (
+                          <Badge key={idx} variant="secondary">{tool}</Badge>
+                        ))
+                      ) : (
+                        <span className="text-muted-foreground italic">Brak danych</span>
+                      )}
+                    </div>
+                  </div>
+                  {data.customerJourney.BoFu.mainMessage && (
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-2">Główny przekaz:</p>
+                      <p className="font-medium">{data.customerJourney.BoFu.mainMessage}</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
         {/* Demographics */}
         <section>
           <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-10">
@@ -462,7 +571,7 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.adHooks.map((hook, idx) => (
+            {(data.topHooksAnalysis?.hooks || data.adHooks || []).map((hook, idx) => (
               <Card 
                 key={idx} 
                 className="relative hover:shadow-xl transition-all duration-200 hover:-translate-y-1 overflow-hidden"
@@ -526,7 +635,7 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
           </h2>
           
           <div className="space-y-8">
-            {data.competitiveOpportunities.map((opportunity, idx) => (
+            {(data.competitivePositioning?.opportunities || data.competitiveOpportunities || []).map((opportunity, idx) => (
               <div key={idx} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card className={`${getPriorityColor(opportunity.priority)} border-2`}>
                   <CardHeader className="pb-4">
@@ -579,18 +688,18 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
           
           <div className="space-y-6">
             {data.tacticalPlaybook.map((play, idx) => {
-              const IconComponent = getPlayIcon(play.type);
+              const IconComponent = getPlayIcon(play.playName);
               return (
                 <Card
                   key={idx}
-                  className={`transition-all hover:shadow-lg hover:-translate-y-1 border-2 ${getPlayColor(play.type)}`}
+                  className={`transition-all hover:shadow-lg hover:-translate-y-1 border-2 ${getPlayColor(play.playName)}`}
                 >
                   <CardContent className="p-6">
                     <h3 className="text-xl font-bold mb-3 flex items-center gap-3">
                       <IconComponent className="h-6 w-6" />
-                      Play #{idx + 1}: {play.title}
+                      Play #{idx + 1}: {play.playName.charAt(0).toUpperCase() + play.playName.slice(1)}
                     </h3>
-                    <p className="text-muted-foreground leading-relaxed">{play.recommendation}</p>
+                    <p className="text-muted-foreground leading-relaxed">{play.description}</p>
                   </CardContent>
                 </Card>
               );

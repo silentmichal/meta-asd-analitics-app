@@ -89,16 +89,16 @@ export const generateMockReportData = (ads: AdData[]): StrategicReportData => {
       strategyGap: 'zbudowanie bardziej osobistej, relacyjnej komunikacji',
     },
     customerJourney: {
-      topOfFunnel: {
-        usedTools: 'Reklamy wideo na Facebook i Instagram',
+      ToFu: {
+        usedTools: ['Reklamy wideo', 'Facebook Ads', 'Instagram Ads'],
         mainMessage: 'Odkryj, jak zaoszczędzić 10 godzin tygodniowo',
       },
-      middleOfFunnel: {
-        usedTools: 'Remarketing z karuzelami produktowymi',
+      MoFu: {
+        usedTools: ['Remarketing', 'Karuzele produktowe', 'Lead Magnet'],
         mainMessage: 'Zobacz, jak inni już korzystają z naszego rozwiązania',
       },
-      bottomOfFunnel: {
-        usedTools: 'Dynamiczne reklamy produktowe (DPA)',
+      BoFu: {
+        usedTools: ['Dynamiczne reklamy produktowe', 'Retargeting', 'Email Marketing'],
         mainMessage: 'Ostatnie sztuki w promocyjnej cenie - tylko dziś',
       },
     },
@@ -159,10 +159,10 @@ export const generateMockReportData = (ads: AdData[]): StrategicReportData => {
       },
     },
     distributionAndFormats: {
-      formatsChartData: {
-        labels: Object.keys(adTypeCount),
-        data: Object.values(adTypeCount),
-      },
+      formatsChartData: Object.keys(adTypeCount).map(label => ({
+        label,
+        value: adTypeCount[label],
+      })),
       platformStrategyAnalysis:
         `Analiza ${ads.length} reklam pokazuje dominację formatów ${Object.keys(adTypeCount).join(', ')}. ` +
         'Strategia dystrybucji koncentruje się głównie na platformach Meta (Facebook i Instagram), ' +
@@ -171,25 +171,22 @@ export const generateMockReportData = (ads: AdData[]): StrategicReportData => {
     },
     tacticalPlaybook: [
       {
-        type: 'adapt',
-        title: 'Zaadaptuj ich najsilniejszą taktykę',
-        recommendation:
+        playName: 'adapt',
+        description:
           'Konkurent skutecznie wykorzystuje karuzele produktowe do prezentacji różnych wariantów. ' +
           'Rekomendacja: Stwórz własne karuzele, ale z naciskiem na historie klientów i case studies. ' +
           'Wykorzystaj ich sprawdzoną strukturę, ale dodaj element ludzki, którego im brakuje.',
       },
       {
-        type: 'exploit',
-        title: 'Zaatakuj niedocenianą przez nich niszę',
-        recommendation:
+        playName: 'exploit',
+        description:
           'Dane demograficzne pokazują, że konkurent niemal całkowicie ignoruje segment kobiet w wieku 35-54. ' +
           'Rekomendacja: Przygotuj dedykowaną kampanię z językiem i wizualizacjami dopasowanymi do tej grupy. ' +
           'To rynek warty minimum 20% ich obecnego zasięgu, który możesz zdobyć bez bezpośredniej walki.',
       },
       {
-        type: 'test',
-        title: 'Przetestuj odmienną narrację emocjonalną',
-        recommendation:
+        playName: 'test',
+        description:
           'Ich komunikacja jest w dużej mierze oparta na logice i strachu (FOMO). ' +
           'Rekomendacja: Uruchom test A/B kampanii opartej na pozytywnych emocjach, aspiracjach i budowaniu społeczności. ' +
           'Pokaż "ludzką twarz" swojej marki i sprawdź, czy zbuduje to silniejszą więź z odbiorcami.',

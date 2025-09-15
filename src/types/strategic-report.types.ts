@@ -32,14 +32,14 @@ export interface ExecutiveSummary {
 }
 
 export interface FunnelStage {
-  usedTools: string;
+  usedTools: string[];
   mainMessage: string;
 }
 
 export interface CustomerJourney {
-  topOfFunnel: FunnelStage;
-  middleOfFunnel: FunnelStage;
-  bottomOfFunnel: FunnelStage;
+  ToFu: FunnelStage;
+  MoFu: FunnelStage;
+  BoFu: FunnelStage;
 }
 
 export interface Demographics {
@@ -81,17 +81,16 @@ export interface MessagingAnatomy {
 }
 
 export interface DistributionAndFormats {
-  formatsChartData: {
-    labels: string[];
-    data: number[];
-  };
+  formatsChartData: Array<{
+    label: string;
+    value: number;
+  }>;
   platformStrategyAnalysis: string;
 }
 
 export interface TacticalPlay {
-  type: 'adapt' | 'exploit' | 'test';
-  title: string;
-  recommendation: string;
+  playName: 'adapt' | 'exploit' | 'test';
+  description: string;
 }
 
 export interface AdHook {
@@ -121,7 +120,13 @@ export interface StrategicReportData {
   messagingAnatomy: MessagingAnatomy;
   distributionAndFormats: DistributionAndFormats;
   tacticalPlaybook: TacticalPlay[];
-  adHooks: AdHook[];
-  competitiveOpportunities: CompetitiveOpportunity[];
+  topHooksAnalysis?: {
+    hooks: AdHook[];
+  };
+  adHooks?: AdHook[];  // For backward compatibility
+  competitivePositioning?: {
+    opportunities: CompetitiveOpportunity[];
+  };
+  competitiveOpportunities?: CompetitiveOpportunity[];  // For backward compatibility
   keyMetrics: KeyMetrics;
 }
