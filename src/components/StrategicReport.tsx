@@ -139,12 +139,15 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
       {
         data: data.distributionAndFormats.formatsChartData.data,
         backgroundColor: [
-          'hsl(var(--primary))',
-          'hsl(var(--secondary))',
-          'hsl(var(--accent))',
-          'hsl(var(--muted))',
+          'hsl(220 70% 50%)',    // Bright blue
+          'hsl(280 70% 50%)',    // Purple
+          'hsl(160 70% 40%)',    // Teal
+          'hsl(45 90% 50%)',     // Gold
+          'hsl(340 70% 50%)',    // Pink
+          'hsl(200 70% 40%)',    // Dark cyan
         ],
         borderWidth: 1,
+        borderColor: 'hsl(var(--border))',
       },
     ],
   };
@@ -462,29 +465,15 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
             {data.adHooks.map((hook, idx) => (
               <Card 
                 key={idx} 
-                className="relative hover:shadow-xl transition-all duration-200 hover:-translate-y-1"
+                className="relative hover:shadow-xl transition-all duration-200 hover:-translate-y-1 overflow-hidden"
               >
-                <CardContent className="p-6">
-                  <div className="absolute top-4 right-4">
-                    <Lightbulb className="h-8 w-8 text-yellow-500/30" />
-                  </div>
+                <div className="absolute -right-6 -bottom-6 opacity-5">
+                  <Lightbulb className="h-24 w-24" />
+                </div>
+                <CardContent className="p-6 relative z-10">
                   <blockquote className="text-lg md:text-xl font-semibold italic text-foreground/90 mb-6">
                     "{hook.hookText}"
                   </blockquote>
-                  {hook.effectiveness && (
-                    <div className="mb-4">
-                      <div className="flex items-center justify-between text-sm text-muted-foreground mb-1">
-                        <span>Skuteczność</span>
-                        <span>{hook.effectiveness}/10</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <div 
-                          className="bg-gradient-to-r from-primary to-primary/60 h-2 rounded-full transition-all duration-500"
-                          style={{ width: `${(hook.effectiveness / 10) * 100}%` }}
-                        />
-                      </div>
-                    </div>
-                  )}
                   <Button 
                     variant="outline" 
                     size="sm" 
