@@ -8,6 +8,7 @@ import StrategicReport from './StrategicReport';
 import LoadingScreen from './LoadingScreen';
 import ReportLoadingScreen from './ReportLoadingScreen';
 import { generateMockReportData } from '@/utils/mockReportData';
+import { sendReportData } from '@/services/adService';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
@@ -80,18 +81,30 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage, ads]);
   
-  const handleAnalyzeAI = () => {
+  const handleAnalyzeAI = async () => {
     setShowConfirmDialog(false);
     setIsGeneratingReport(true);
     
-    // Simulate API call delay (3 seconds as mentioned)
-    setTimeout(() => {
-      const report = generateMockReportData(ads);
-      setReportData(report);
+    try {
+      // Send data to API
+      await sendReportData(ads);
+      console.log('✅ Dane zostały wysłane do API');
+      toast.success('Dane zostały wysłane do API!');
+      
+      // For now, keep mock report generation
+      setTimeout(() => {
+        const report = generateMockReportData(ads);
+        setReportData(report);
+        setIsGeneratingReport(false);
+        setShowReport(true);
+        toast.success('Raport strategiczny został wygenerowany!');
+      }, 3000);
+      
+    } catch (error) {
       setIsGeneratingReport(false);
-      setShowReport(true);
-      toast.success('Raport strategiczny został wygenerowany!');
-    }, 3000);
+      toast.error('Błąd podczas wysyłania danych do API');
+      console.error('API Error:', error);
+    }
   };
 
   const handleBackFromReport = () => {

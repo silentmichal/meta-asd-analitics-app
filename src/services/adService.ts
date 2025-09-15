@@ -130,3 +130,32 @@ export function extractDomain(url: string): string {
     return url;
   }
 }
+
+// Send data to report generation API
+export async function sendReportData(ads: AdData[]): Promise<void> {
+  const endpoint = 'https://n8n.akademia.click/webhook-test/33fc2786-8c18-4e93-9365-600bb090ac3d';
+  
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        details: ads,
+        timestamp: new Date().toISOString()
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    console.log('Data sent successfully to API');
+    console.log('Response status:', response.status);
+    
+  } catch (error) {
+    console.error('Error sending data to API:', error);
+    throw error;
+  }
+}
