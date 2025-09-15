@@ -18,7 +18,8 @@ export async function generateStrategicReport(ads: AdData[]): Promise<StrategicR
       reportData = apiResponse[0].output;
       console.log('📊 Dane wyodrębnione z tablicy (apiResponse[0].output):', reportData);
     } else if (apiResponse && !Array.isArray(apiResponse)) {
-      reportData = apiResponse;
+      // Check if response has {output: {...}} structure
+      reportData = apiResponse.output || apiResponse;
       console.log('📊 Dane używane bezpośrednio (nie tablica):', reportData);
     } else {
       throw new Error('Invalid API response structure');
