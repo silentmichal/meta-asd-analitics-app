@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Bot, ArrowLeft, Calendar, BarChart3, Globe, FileText } from 'lucide-react';
+import { Bot, ArrowLeft, Calendar, BarChart3, Globe, FileText, Layers } from 'lucide-react';
 import { AdData } from '@/types/ad.types';
 import { StrategicReportData } from '@/types/strategic-report.types';
 import AdCard from './AdCard';
@@ -9,6 +9,7 @@ import LoadingScreen from './LoadingScreen';
 import ReportLoadingScreen from './ReportLoadingScreen';
 import { generateMockReportData } from '@/utils/mockReportData';
 import { sendReportData } from '@/services/adService';
+import { countAdVariants } from '@/utils/adUtils';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
@@ -66,11 +67,15 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
       instagram: ads.filter(ad => ad.adData.publisherPlatform === 'Instagram').length,
     };
     
+    // Count total ad variants
+    const totalVariants = countAdVariants(ads);
+    
     return {
       profilePicUrl,
       dateRange: minDate && maxDate ? { start: minDate, end: maxDate } : null,
       platformStats,
-      totalAds: ads.length
+      totalAds: ads.length,
+      totalVariants
     };
   }, [ads]);
   
@@ -181,6 +186,17 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
                     {stats.totalAds === 1 ? 'reklama' : 'reklam'}
                   </span>
                 </Badge>
+                
+                {/* Total Variants (only show if different from total ads) */}
+                {stats.totalVariants > stats.totalAds && (
+                  <Badge variant="outline" className="flex items-center gap-1.5 px-3 py-1.5 border-purple-500/20">
+                    <Layers className="w-4 h-4 text-purple-500" />
+                    <span className="font-medium">{stats.totalVariants}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {stats.totalVariants === 1 ? 'wariant' : 'wariantów'}
+                    </span>
+                  </Badge>
+                )}
                 
                 {/* Date Range */}
                 {stats.dateRange && (

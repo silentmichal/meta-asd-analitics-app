@@ -1,5 +1,19 @@
 import { AdData, CardDisplayType } from '@/types/ad.types';
 
+// Count total ad variants (including DCO, Carousel, Multi-image cards)
+export function countAdVariants(ads: AdData[]): number {
+  return ads.reduce((total, ad) => {
+    // For DCO, CAROUSEL, MULTI_IMAGE, DPA - count number of cards
+    if ((ad.adType === 'DCO' || ad.adType === 'CAROUSEL' || 
+         ad.adType === 'MULTI_IMAGE' || ad.adType === 'DPA') && 
+        ad.adData.cards && ad.adData.cards.length > 0) {
+      return total + ad.adData.cards.length;
+    }
+    // For regular ads (IMAGE, VIDEO) - count as 1
+    return total + 1;
+  }, 0);
+}
+
 export function determineCardType(ad: AdData): CardDisplayType {
   const adType = ad.adType;
   
