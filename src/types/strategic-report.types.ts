@@ -33,7 +33,7 @@ export interface ExecutiveSummary {
 
 export interface FunnelStage {
   usedTools: string[];
-  mainMessage: string;
+  mainMessage: string | null;
 }
 
 export interface CustomerJourney {
