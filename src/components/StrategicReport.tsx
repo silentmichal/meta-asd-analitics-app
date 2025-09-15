@@ -138,10 +138,10 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
   };
 
   const formatChartData = {
-    labels: data.distributionAndFormats.formatsChartData.map(item => item.label),
+    labels: data.distributionAndFormats?.formatsChartData?.map(item => item.label) || [],
     datasets: [
       {
-        data: data.distributionAndFormats.formatsChartData.map(item => item.value),
+        data: data.distributionAndFormats?.formatsChartData?.map(item => item.value) || [],
         backgroundColor: [
           'hsl(220 70% 50%)',    // Bright blue
           'hsl(280 70% 50%)',    // Purple
@@ -647,34 +647,44 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
         </section>
 
         {/* Distribution & Formats */}
-        <section>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-10">
-            Dystrybucja i Formaty
-          </h2>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl text-center">
-                Podział Formatów Reklam
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="h-64">
-                  <Doughnut data={formatChartData} options={formatChartOptions} />
+        {data.distributionAndFormats && (
+          <section>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-10">
+              Dystrybucja i Formaty
+            </h2>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-2xl text-center">
+                  Podział Formatów Reklam
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {data.distributionAndFormats.formatsChartData && data.distributionAndFormats.formatsChartData.length > 0 ? (
+                    <>
+                      <div className="h-64">
+                        <Doughnut data={formatChartData} options={formatChartOptions} />
+                      </div>
+                      <div className="flex items-center">
+                        <div>
+                          <h4 className="text-lg font-bold mb-2">Analiza Strategii Platform:</h4>
+                          <p className="text-muted-foreground">
+                            {data.distributionAndFormats.platformStrategyAnalysis || 'Brak danych o strategii platform.'}
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="col-span-2 text-center py-8 text-muted-foreground">
+                      Brak danych o dystrybucji i formatach
+                    </div>
+                  )}
                 </div>
-                <div className="flex items-center">
-                  <div>
-                    <h4 className="text-lg font-bold mb-2">Analiza Strategii Platform:</h4>
-                    <p className="text-muted-foreground">
-                      {data.distributionAndFormats.platformStrategyAnalysis}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
+              </CardContent>
+            </Card>
+          </section>
+        )}
 
         {/* Competitive Positioning */}
         <section>
