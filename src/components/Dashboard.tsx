@@ -5,6 +5,8 @@ import { StrategicReportData } from '@/types/strategic-report.types';
 import AdCard from './AdCard';
 import Pagination from './Pagination';
 import StrategicReport from './StrategicReport';
+import LoadingScreen from './LoadingScreen';
+import ReportLoadingScreen from './ReportLoadingScreen';
 import { generateMockReportData } from '@/utils/mockReportData';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -37,6 +39,7 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [reportData, setReportData] = useState<StrategicReportData | null>(null);
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
   
   const totalPages = Math.ceil(ads.length / ADS_PER_PAGE);
   
@@ -79,22 +82,27 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
   
   const handleAnalyzeAI = () => {
     setShowConfirmDialog(false);
+    setIsGeneratingReport(true);
     
-    toast.loading('Generowanie raportu strategicznego...', { id: 'report-generation' });
-    
-    // Simulate API call delay
+    // Simulate API call delay (3 seconds as mentioned)
     setTimeout(() => {
       const report = generateMockReportData(ads);
       setReportData(report);
+      setIsGeneratingReport(false);
       setShowReport(true);
-      toast.success('Raport strategiczny został wygenerowany!', { id: 'report-generation' });
-    }, 2000);
+      toast.success('Raport strategiczny został wygenerowany!');
+    }, 3000);
   };
 
   const handleBackFromReport = () => {
     setShowReport(false);
     setReportData(null);
   };
+
+  // Show loading screen when generating report
+  if (isGeneratingReport) {
+    return <ReportLoadingScreen />;
+  }
 
   // Show report if generated
   if (showReport && reportData) {
