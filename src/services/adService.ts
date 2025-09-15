@@ -131,31 +131,41 @@ export function extractDomain(url: string): string {
   }
 }
 
-// Send data to report generation API
-export async function sendReportData(ads: AdData[]): Promise<void> {
-  const endpoint = 'https://n8n.akademia.click/webhook-test/33fc2786-8c18-4e93-9365-600bb090ac3d';
-  
+// Send report data to the API and return response
+export async function sendReportData(ads: AdData[]): Promise<any> {
   try {
-    const response = await fetch(endpoint, {
+    const { countAdVariants } = await import('@/utils/adUtils');
+    const pageName = ads[0]?.adData?.pageName || 'Unknown';
+    const pageId = ads[0]?.basic?.page_id || '';
+    
+    const payload = {
+      details: ads,
+      timestamp: new Date().toISOString(),
+      metadata: {
+        pageId: pageId,
+        pageName: pageName,
+        totalAds: ads.length,
+        totalVariants: countAdVariants(ads)
+      }
+    };
+
+    const response = await fetch('https://n8n.akademia.click/webhook-test/33fc2786-8c18-4e93-9365-600bb090ac3d', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        details: ads,
-        timestamp: new Date().toISOString()
-      })
+      body: JSON.stringify(payload)
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
-    console.log('Data sent successfully to API');
-    console.log('Response status:', response.status);
-    
+
+    const data = await response.json();
+    console.log('Report data sent successfully, response received');
+    return data;
   } catch (error) {
-    console.error('Error sending data to API:', error);
+    console.error('Error sending report data:', error);
     throw error;
   }
 }

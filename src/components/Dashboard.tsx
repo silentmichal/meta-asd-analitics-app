@@ -7,8 +7,7 @@ import Pagination from './Pagination';
 import StrategicReport from './StrategicReport';
 import LoadingScreen from './LoadingScreen';
 import ReportLoadingScreen from './ReportLoadingScreen';
-import { generateMockReportData } from '@/utils/mockReportData';
-import { sendReportData } from '@/services/adService';
+import { generateStrategicReport } from '@/services/reportService';
 import { countAdVariants } from '@/utils/adUtils';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -91,24 +90,22 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
     setIsGeneratingReport(true);
     
     try {
-      // Send data to API
-      await sendReportData(ads);
-      console.log('✅ Dane zostały wysłane do API');
-      toast.success('Dane zostały wysłane do API!');
+      // Generate report via API
+      const reportResponse = await generateStrategicReport(ads);
       
-      // For now, keep mock report generation
-      setTimeout(() => {
-        const report = generateMockReportData(ads);
-        setReportData(report);
+      // Process the API response
+      if (reportResponse) {
+        setReportData(reportResponse);
         setIsGeneratingReport(false);
         setShowReport(true);
         toast.success('Raport strategiczny został wygenerowany!');
-      }, 3000);
-      
+      } else {
+        throw new Error('Nieprawidłowa odpowiedź z API');
+      }
     } catch (error) {
+      console.error('Error generating report:', error);
+      toast.error('Błąd podczas generowania raportu. Spróbuj ponownie.');
       setIsGeneratingReport(false);
-      toast.error('Błąd podczas wysyłania danych do API');
-      console.error('API Error:', error);
     }
   };
 
@@ -119,7 +116,15 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
 
   // Show loading screen when generating report
   if (isGeneratingReport) {
-    return <ReportLoadingScreen />;
+    const totalVariants = countAdVariants(ads);
+    const estimatedTimeInSeconds = totalVariants * 40;
+    
+    return (
+      <ReportLoadingScreen 
+        estimatedTime={estimatedTimeInSeconds}
+        totalVariants={totalVariants}
+      />
+    );
   }
 
   // Show report if generated
