@@ -45,7 +45,36 @@ export const generateMockReportData = (ads: AdData[]): StrategicReportData => {
     ],
   };
 
+  // Generate ad hooks
+  const adHooks = ads
+    .slice(0, 5)
+    .filter(ad => ad.adData.body)
+    .map((ad, idx) => ({
+      hookText: ad.adData.body?.split('.')[0] || 'Odkryj metodę, która zmieni Twój biznes',
+      referenceUrl: ad.basic?.ad_snapshot_url || '#',
+      effectiveness: 7 + Math.floor(Math.random() * 3),
+    }));
+
+  // Add default hooks if needed
+  while (adHooks.length < 3) {
+    adHooks.push({
+      hookText: [
+        "Czy wiesz, że 90% firm traci klientów przez ten jeden błąd?",
+        "Odkryj metodę, która zwiększyła nasze przychody o 300%",
+        "Przestań marnować pieniądze na marketing, który nie działa"
+      ][adHooks.length],
+      referenceUrl: '#',
+      effectiveness: 8,
+    });
+  }
+
   return {
+    keyMetrics: {
+      dominantAgeGroup: '25-44 LATA',
+      dominantGender: 'MĘŻCZYŹNI',
+      mainGoal: 'GENEROWANIE LEADÓW',
+      mostUsedFormat: Object.keys(adTypeCount)[0] === 'VIDEO' ? 'WIDEO' : 'OBRAZ',
+    },
     reportMetadata: {
       analyzedCompanyName: companyName,
       analysisDate: currentDate,
@@ -164,6 +193,24 @@ export const generateMockReportData = (ads: AdData[]): StrategicReportData => {
           'Ich komunikacja jest w dużej mierze oparta na logice i strachu (FOMO). ' +
           'Rekomendacja: Uruchom test A/B kampanii opartej na pozytywnych emocjach, aspiracjach i budowaniu społeczności. ' +
           'Pokaż "ludzką twarz" swojej marki i sprawdź, czy zbuduje to silniejszą więź z odbiorcami.',
+      },
+    ],
+    adHooks: adHooks,
+    competitiveOpportunities: [
+      {
+        weakness: 'Brak personalizacji w komunikacji - ten sam przekaz dla wszystkich',
+        recommendation: 'Stwórz spersonalizowane warianty reklam dla każdej grupy wiekowej.',
+        priority: 'high' as const,
+      },
+      {
+        weakness: 'Ignorowanie potencjału remarketingu',
+        recommendation: 'Zbuduj rozbudowany funnel remarketingowy z różnymi komunikatami.',
+        priority: 'high' as const,
+      },
+      {
+        weakness: 'Słabe wykorzystanie social proof',
+        recommendation: 'Zbieraj i eksponuj opinie zadowolonych klientów.',
+        priority: 'medium' as const,
       },
     ],
   };

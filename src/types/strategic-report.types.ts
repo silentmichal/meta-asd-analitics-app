@@ -94,6 +94,25 @@ export interface TacticalPlay {
   recommendation: string;
 }
 
+export interface AdHook {
+  hookText: string;
+  referenceUrl: string;
+  effectiveness?: number;
+}
+
+export interface CompetitiveOpportunity {
+  weakness: string;
+  recommendation: string;
+  priority: 'high' | 'medium' | 'low';
+}
+
+export interface KeyMetrics {
+  dominantAgeGroup: string;
+  dominantGender: string;
+  mainGoal: string;
+  mostUsedFormat: string;
+}
+
 export interface StrategicReportData {
   reportMetadata: ReportMetadata;
   executiveSummary: ExecutiveSummary;
@@ -102,4 +121,7 @@ export interface StrategicReportData {
   messagingAnatomy: MessagingAnatomy;
   distributionAndFormats: DistributionAndFormats;
   tacticalPlaybook: TacticalPlay[];
+  adHooks: AdHook[];
+  competitiveOpportunities: CompetitiveOpportunity[];
+  keyMetrics: KeyMetrics;
 }
