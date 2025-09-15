@@ -97,9 +97,16 @@ export default function ReportLoadingScreen({ estimatedTime = 60, totalVariants 
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-primary" />
-                    <span className="text-white/80">Szacowany czas pozostały:</span>
+                    <span className="text-white/80">Szacowany czas:</span>
                   </div>
                   <span className="font-mono font-semibold text-primary">
+                    ~{Math.ceil(estimatedTime / 60)} min
+                  </span>
+                </div>
+                
+                <div className="flex items-center justify-between text-sm mt-2">
+                  <span className="text-white/80">Pozostało:</span>
+                  <span className="font-mono font-semibold text-white">
                     {formatTime(timeRemaining)}
                   </span>
                 </div>

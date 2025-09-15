@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Bot, ArrowLeft, Calendar, BarChart3, Globe, FileText, Layers } from 'lucide-react';
+import { Bot, ArrowLeft, Calendar, BarChart3, Globe, FileText, Layers, Clock } from 'lucide-react';
 import { AdData } from '@/types/ad.types';
 import { StrategicReportData } from '@/types/strategic-report.types';
 import AdCard from './AdCard';
@@ -192,16 +192,13 @@ export default function Dashboard({ ads, pageName, onBack }: DashboardProps) {
                   </span>
                 </Badge>
                 
-                {/* Total Variants (only show if different from total ads) */}
-                {stats.totalVariants > stats.totalAds && (
-                  <Badge variant="outline" className="flex items-center gap-1.5 px-3 py-1.5 border-purple-500/20">
-                    <Layers className="w-4 h-4 text-purple-500" />
-                    <span className="font-medium">{stats.totalVariants}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {stats.totalVariants === 1 ? 'wariant' : 'wariantów'}
-                    </span>
-                  </Badge>
-                )}
+                {/* Estimated Report Time */}
+                <Badge variant="outline" className="flex items-center gap-1.5 px-3 py-1.5 border-purple-500/20">
+                  <Clock className="w-4 h-4 text-purple-500" />
+                  <span className="text-xs">
+                    Czas generowania raportu: ~{Math.ceil((stats.totalVariants * 40) / 60)} min
+                  </span>
+                </Badge>
                 
                 {/* Date Range */}
                 {stats.dateRange && (
