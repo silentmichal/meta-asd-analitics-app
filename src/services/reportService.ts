@@ -8,14 +8,23 @@ export async function generateStrategicReport(ads: AdData[]): Promise<StrategicR
     // Send data to API and get response
     const apiResponse = await sendReportData(ads);
     
+    // Handle array response structure from API
+    let reportData;
+    if (Array.isArray(apiResponse) && apiResponse.length > 0 && apiResponse[0].output) {
+      reportData = apiResponse[0].output;
+    } else if (apiResponse && !Array.isArray(apiResponse)) {
+      reportData = apiResponse;
+    } else {
+      throw new Error('Invalid API response structure');
+    }
+    
     // If the API response is already in the correct format, return it
-    if (apiResponse && isValidReportData(apiResponse)) {
-      return apiResponse as StrategicReportData;
+    if (reportData && isValidReportData(reportData)) {
+      return transformApiResponse(reportData);
     }
     
     // If API response needs transformation, transform it here
-    // This is a placeholder for potential data transformation
-    const transformedData = transformApiResponse(apiResponse);
+    const transformedData = transformApiResponse(reportData);
     
     return transformedData;
   } catch (error) {
@@ -39,15 +48,28 @@ function isValidReportData(data: any): boolean {
 
 // Transform API response to match StrategicReportData structure
 function transformApiResponse(apiResponse: any): StrategicReportData {
-  // This function would handle any necessary transformation
-  // from the API response format to our internal format
-  // For now, we'll assume the API returns the correct format
+  // Handle transformation of specific fields
+  const transformedData = { ...apiResponse };
   
-  // Fallback to a minimal valid structure if needed
-  if (!apiResponse) {
-    throw new Error('Invalid API response');
+  // Transform formatsChartData from API format to expected format
+  if (transformedData.distributionAndFormats?.formatsChartData) {
+    transformedData.distributionAndFormats.formatsChartData = 
+      transformedData.distributionAndFormats.formatsChartData.map((item: any) => ({
+        label: item.format || item.label,
+        value: item.percentage || item.value
+      }));
   }
   
-  // Return the response as is if it appears to be valid
-  return apiResponse;
+  // Fix the customerJourney field casing (toFu -> ToFu, etc.)
+  if (transformedData.customerJourney) {
+    const journey = transformedData.customerJourney;
+    transformedData.customerJourney = {
+      ToFu: journey.toFu || journey.ToFu || { usedTools: [], mainMessage: null },
+      MoFu: journey.moFu || journey.MoFu || { usedTools: [], mainMessage: null },
+      BoFu: journey.boFu || journey.BoFu || { usedTools: [], mainMessage: null }
+    };
+  }
+  
+  // Return the transformed response
+  return transformedData;
 }

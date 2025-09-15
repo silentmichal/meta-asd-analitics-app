@@ -58,17 +58,12 @@ export default function ReportLoadingScreen({ estimatedTime = 60, totalVariants 
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
         <div className="text-center max-w-lg">
           <div className="mb-8 flex justify-center">
-            <div className="relative">
-              <GooeyLoader
-                primaryColor="hsl(var(--primary))"
-                secondaryColor="hsl(var(--primary-glow))"
-                borderColor="hsl(var(--primary))"
-                className="scale-150"
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <FileText className="w-8 h-8 text-primary animate-pulse" />
-              </div>
-            </div>
+            <GooeyLoader
+              primaryColor="hsl(var(--primary))"
+              secondaryColor="hsl(var(--primary-glow))"
+              borderColor="hsl(var(--primary))"
+              className="scale-150"
+            />
           </div>
           
           <div className="space-y-4">
@@ -130,18 +125,6 @@ export default function ReportLoadingScreen({ estimatedTime = 60, totalVariants 
             </div>
           </div>
           
-          <div className="mt-8 flex justify-center gap-2">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="w-2 h-2 bg-primary rounded-full animate-pulse"
-                style={{
-                  animationDelay: `${i * 0.15}s`,
-                  animationDuration: '1.5s'
-                }}
-              />
-            ))}
-          </div>
         </div>
       </div>
     </BeamsBackground>
