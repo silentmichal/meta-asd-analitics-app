@@ -98,6 +98,7 @@ export async function fetchAds(filters: AdFilters): Promise<AdData[]> {
     } else if (Array.isArray(data)) {
       rawAds = data;
     } else {
+      console.error('Unexpected API response format:', data);
       return [];
     }
 
@@ -161,6 +162,7 @@ export async function sendReportData(ads: AdData[]): Promise<any> {
     }
 
     const data = await response.json();
+    console.log('Report data sent successfully, response received');
     return data;
   } catch (error) {
     console.error('Error sending report data:', error);

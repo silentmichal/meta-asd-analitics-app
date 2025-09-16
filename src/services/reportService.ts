@@ -5,28 +5,37 @@ import { sendReportData } from './adService';
 // Generate strategic report by sending data to API and processing response
 export async function generateStrategicReport(ads: AdData[]): Promise<StrategicReportData> {
   try {
+    console.log('📤 Wysyłanie danych do API:', { numberOfAds: ads.length });
+    
     // Send data to API and get response
     const apiResponse = await sendReportData(ads);
+    
+    console.log('📥 Surowa odpowiedź z API:', apiResponse);
     
     // Handle array response structure from API
     let reportData;
     if (Array.isArray(apiResponse) && apiResponse.length > 0 && apiResponse[0].output) {
       reportData = apiResponse[0].output;
+      console.log('📊 Dane wyodrębnione z tablicy (apiResponse[0].output):', reportData);
     } else if (apiResponse && !Array.isArray(apiResponse)) {
       // Check if response has {output: {...}} structure
       reportData = apiResponse.output || apiResponse;
+      console.log('📊 Dane używane bezpośrednio (nie tablica):', reportData);
     } else {
       throw new Error('Invalid API response structure');
     }
     
     // If the API response is already in the correct format, return it
     if (reportData && isValidReportData(reportData)) {
+      console.log('✅ Dane są w poprawnym formacie, rozpoczynam transformację...');
       const transformed = transformApiResponse(reportData);
+      console.log('🎯 Dane po transformacji:', transformed);
       return transformed;
     }
     
     // If API response needs transformation, transform it here
     const transformedData = transformApiResponse(reportData);
+    console.log('🎯 Dane po transformacji:', transformedData);
     
     return transformedData;
   } catch (error) {
