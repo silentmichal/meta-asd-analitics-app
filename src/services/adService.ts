@@ -86,7 +86,7 @@ export async function fetchAds(filters: AdFilters): Promise<AdData[]> {
     }
     
     const response = await fetch(
-      `https://n8n.akademia.click/webhook/f319c524-6a23-4f7d-b4e4-25741eb39063?${params.toString()}`
+      `https://n8n.akademia.click/webhook-test/33fc2786-8c18-4e93-9365-600bb090ac3d?${params.toString()}`
     );
     if (!response.ok) throw new Error(`Failed to fetch ads: ${response.status}`);
 
