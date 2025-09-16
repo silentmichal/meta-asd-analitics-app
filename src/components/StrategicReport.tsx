@@ -15,8 +15,7 @@ import {
   Megaphone,
   UserCheck,
   ShoppingCart,
-  ArrowRight,
-  Download
+  ArrowRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,9 +32,6 @@ import {
   ArcElement,
 } from 'chart.js';
 import { Bar, Doughnut } from 'react-chartjs-2';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { toast } from 'sonner';
 
 ChartJS.register(
   CategoryScale,
@@ -53,63 +49,6 @@ interface StrategicReportProps {
 }
 
 const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
-  const handleExportPDF = async () => {
-    try {
-      // Show loading toast
-      toast.loading('Generowanie PDF...', { id: 'pdf-export' });
-      
-      // Find element to export
-      const element = document.getElementById('strategic-report-content');
-      if (!element) {
-        toast.error('Nie można znaleźć raportu do eksportu', { id: 'pdf-export' });
-        return;
-      }
-      
-      // Configure html2canvas
-      const canvas = await html2canvas(element, {
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff'
-      } as any);
-      
-      // Convert to PDF
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
-      
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 297; // A4 height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 0;
-      
-      // Add first page
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-      
-      // Add additional pages if needed
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-      
-      // Generate filename
-      const fileName = `raport-strategiczny-${data.reportMetadata.analyzedCompanyName.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`;
-      
-      // Save PDF
-      pdf.save(fileName);
-      
-      toast.success('PDF został wygenerowany!', { id: 'pdf-export' });
-    } catch (error) {
-      console.error('Błąd podczas generowania PDF:', error);
-      toast.error('Wystąpił błąd podczas generowania PDF', { id: 'pdf-export' });
-    }
-  };
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -247,28 +186,17 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-card border-b py-10 no-print">
+      <header className="bg-card border-b py-10">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex gap-4 mb-6">
-            <Button
-              onClick={onBack}
-              variant="ghost"
-              size="sm"
-              className="no-print"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Powrót do dashboardu
-            </Button>
-            <Button
-              onClick={handleExportPDF}
-              variant="default"
-              size="sm"
-              className="no-print"
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Pobierz PDF
-            </Button>
-          </div>
+          <Button
+            onClick={onBack}
+            variant="ghost"
+            size="sm"
+            className="mb-6"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Powrót do dashboardu
+          </Button>
           
           <div className="text-center">
             <Badge variant="secondary" className="mb-4">
@@ -290,7 +218,7 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
         </div>
       </header>
 
-      <main id="strategic-report-content" className="max-w-7xl mx-auto px-6 py-16 space-y-20 bg-white">
+      <main className="max-w-7xl mx-auto px-6 py-16 space-y-20">
         {/* KPI Dashboard */}
         <section>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
