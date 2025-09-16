@@ -153,7 +153,8 @@ function getColorName(hex: string): string {
     '#00ff00': 'Zielony',
     '#0000ff': 'Niebieski'
   };
-  return colorMap[hex.toLowerCase()] || 'Kolor niestandardowy';
+  // Return hex value if no name is found, making it more user-friendly
+  return colorMap[hex.toLowerCase()] || hex.toUpperCase();
 }
 
 // Helper function to extract dominant age group from demographics

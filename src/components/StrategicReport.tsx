@@ -573,17 +573,20 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
                 </div>
                 <div>
                   <strong>Paleta Kolorów:</strong>
-                  <div className="flex gap-2 mt-2">
+                  <div className="flex flex-wrap gap-3 mt-2">
                     {data.messagingAnatomy.visuals.colorPalette.map((color, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-2 bg-card/50 rounded-md px-2 py-1 border border-border"
+                        title={`Hex: ${color.hex}`}
                       >
                         <div
-                          className="w-6 h-6 rounded border"
+                          className="w-6 h-6 rounded border-2 border-border shadow-sm"
                           style={{ backgroundColor: color.hex }}
                         />
-                        <span className="text-sm">{color.name}</span>
+                        <span className="text-sm font-mono">
+                          {color.name.startsWith('#') ? color.name : `${color.name}`}
+                        </span>
                       </div>
                     ))}
                   </div>
