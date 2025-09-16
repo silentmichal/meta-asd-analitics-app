@@ -63,28 +63,42 @@ function transformApiResponse(apiResponse: any): StrategicReportData {
   
   // Transform formatsChartData from API format to expected format
   if (transformedData.distributionAndFormats?.formatsChartData) {
-    transformedData.distributionAndFormats.formatsChartData = 
-      transformedData.distributionAndFormats.formatsChartData.map((item: any) => ({
+    const chartData = transformedData.distributionAndFormats.formatsChartData;
+    
+    // Check if it's a Chart.js object format (has labels and datasets)
+    if (chartData.labels && chartData.datasets) {
+      const labels = chartData.labels || [];
+      const data = chartData.datasets?.[0]?.data || [];
+      
+      // Convert to array format
+      transformedData.distributionAndFormats.formatsChartData = labels.map((label: string, index: number) => ({
+        label: label,
+        value: data[index] || 0
+      }));
+    } else if (Array.isArray(chartData)) {
+      // If it's already an array, just normalize the field names
+      transformedData.distributionAndFormats.formatsChartData = chartData.map((item: any) => ({
         label: item.format || item.label,
         value: item.percentage || item.value
       }));
+    }
   }
   
-  // Fix the customerJourney field casing (toFu -> ToFu, etc.)
+  // Fix the customerJourney field casing (handle various API formats)
   if (transformedData.customerJourney) {
     const journey = transformedData.customerJourney;
     transformedData.customerJourney = {
-      ToFu: journey.toFu || journey.ToFu || { usedTools: [], mainMessage: null },
-      MoFu: journey.moFu || journey.MoFu || { usedTools: [], mainMessage: null },
-      BoFu: journey.boFu || journey.BoFu || { usedTools: [], mainMessage: null }
+      ToFu: journey.ToFu || journey.toFu || journey.topOfFunnel || { usedTools: [], mainMessage: null },
+      MoFu: journey.MoFu || journey.moFu || journey.middleOfFunnel || { usedTools: [], mainMessage: null },
+      BoFu: journey.BoFu || journey.boFu || journey.bottomOfFunnel || { usedTools: [], mainMessage: null }
     };
   }
   
-  // Transform tacticalPlaybook from API format (type/recommendation) to expected format (playName/description)
+  // Transform tacticalPlaybook from API format to expected format (playName/description)
   if (transformedData.tacticalPlaybook && Array.isArray(transformedData.tacticalPlaybook)) {
     transformedData.tacticalPlaybook = transformedData.tacticalPlaybook.map((play: any) => ({
-      playName: play.type || play.playName || 'test',
-      description: play.recommendation || play.description || ''
+      playName: play.recommendationType || play.category || play.type || play.playName || 'test',
+      description: play.description || play.recommendation || ''
     }));
   }
   
@@ -117,7 +131,10 @@ function transformApiResponse(apiResponse: any): StrategicReportData {
 function getColorName(hex: string): string {
   const colorMap: { [key: string]: string } = {
     '#0d131f': 'Ciemny granat',
+    '#101923': 'Ciemny granat',
+    '#0f263a': 'Granatowy',
     '#feda01': 'Żółty',
+    '#ffd600': 'Złoty żółty',
     '#ffffff': 'Biały',
     '#000000': 'Czarny',
     '#ff0000': 'Czerwony',
