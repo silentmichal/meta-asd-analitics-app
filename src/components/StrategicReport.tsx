@@ -416,7 +416,7 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
         }
       };
       
-      const response = await fetch('https://n8n.akademia.click/webhook-test/83dec58d-c2d4-40ec-b704-7da4ca7c3f59', {
+      const response = await fetch('https://n8n.akademia.click/webhook/83dec58d-c2d4-40ec-b704-7da4ca7c3f59', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
