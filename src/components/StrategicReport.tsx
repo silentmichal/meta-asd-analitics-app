@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { 
   ArrowLeft, 
   Users, 
@@ -16,11 +16,19 @@ import {
   UserCheck,
   ShoppingCart,
   ArrowRight,
-  Download
+  Download,
+  Mail,
+  Send
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { StrategicReportData } from '@/types/strategic-report.types';
 import {
   Chart as ChartJS,
@@ -47,12 +55,229 @@ ChartJS.register(
   ArcElement
 );
 
+// Email validation schema
+const emailSchema = z.object({
+  email: z.string().email("Nieprawidłowy adres email")
+});
+
 interface StrategicReportProps {
   data: StrategicReportData;
   onBack: () => void;
 }
 
 const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
+  const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  
+  const form = useForm<z.infer<typeof emailSchema>>({
+    resolver: zodResolver(emailSchema),
+    defaultValues: {
+      email: ""
+    }
+  });
+
+  // Function to generate email-friendly HTML
+  const generateEmailHTML = (): string => {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 30px; text-align: center;">
+              <h1 style="margin: 0; font-size: 32px;">Raport Strategiczny</h1>
+              <p style="margin: 10px 0 0 0; font-size: 18px;">${data.reportMetadata.analyzedCompanyName}</p>
+              <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.9;">Data analizy: ${data.reportMetadata.analysisDate}</p>
+            </td>
+          </tr>
+          
+          <!-- Key Metrics -->
+          <tr>
+            <td style="padding: 30px;">
+              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">Kluczowe Metryki</h2>
+              <table width="100%" cellpadding="10" style="border-collapse: collapse;">
+                <tr>
+                  <td style="border: 1px solid #e5e5e5; padding: 15px; background: #f9f9f9;">
+                    <strong>Grupa wiekowa:</strong> ${data.keyMetrics.dominantAgeGroup}
+                  </td>
+                  <td style="border: 1px solid #e5e5e5; padding: 15px; background: #f9f9f9;">
+                    <strong>Płeć:</strong> ${data.keyMetrics.dominantGender}
+                  </td>
+                </tr>
+                <tr>
+                  <td style="border: 1px solid #e5e5e5; padding: 15px; background: #f9f9f9;">
+                    <strong>Główny cel:</strong> ${data.keyMetrics.mainGoal}
+                  </td>
+                  <td style="border: 1px solid #e5e5e5; padding: 15px; background: #f9f9f9;">
+                    <strong>Format reklam:</strong> ${data.keyMetrics.mostUsedFormat}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Executive Summary -->
+          <tr>
+            <td style="padding: 30px; background: #f0f4ff;">
+              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">Podsumowanie Wykonawcze</h2>
+              <p style="line-height: 1.8; font-size: 16px;">
+                Analiza reklam firmy <strong>${data.reportMetadata.analyzedCompanyName}</strong> 
+                wskazuje na precyzyjnie stargetowaną strategię, której celem jest dotarcie do 
+                <strong style="color: #667eea;">${data.executiveSummary.mainDemographic}</strong>. 
+                Ich kluczową siłą jest <strong>${data.executiveSummary.competitorStrength}</strong>, 
+                co widać w copywritingu oraz spójnej komunikacji wizualnej. Dane jednoznacznie pokazują, 
+                że firma skupia swoje działania na rynku 
+                <strong style="color: #667eea;">${data.executiveSummary.mainMarket}</strong>, 
+                ignorując potencjał w innych segmentach. Naszą największą szansą jest zaadresowanie potrzeb 
+                <strong style="color: #667eea;">${data.executiveSummary.overlookedDemographic}</strong> 
+                oraz ${data.executiveSummary.strategyGap}.
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Customer Journey -->
+          <tr>
+            <td style="padding: 30px;">
+              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">Customer Journey</h2>
+              
+              <!-- ToFu -->
+              <div style="margin-bottom: 20px; padding: 20px; border-left: 4px solid #3b82f6; background: #eff6ff;">
+                <h3 style="color: #3b82f6; margin: 0 0 10px 0;">Top of Funnel (ToFu) - Świadomość</h3>
+                <p><strong>Narzędzia:</strong> ${data.customerJourney.ToFu.usedTools.join(', ') || 'Brak danych'}</p>
+                ${data.customerJourney.ToFu.mainMessage ? `<p><strong>Główny przekaz:</strong> "${data.customerJourney.ToFu.mainMessage}"</p>` : ''}
+              </div>
+              
+              <!-- MoFu -->
+              <div style="margin-bottom: 20px; padding: 20px; border-left: 4px solid #8b5cf6; background: #f3e8ff;">
+                <h3 style="color: #8b5cf6; margin: 0 0 10px 0;">Middle of Funnel (MoFu) - Zainteresowanie</h3>
+                <p><strong>Narzędzia:</strong> ${data.customerJourney.MoFu.usedTools.join(', ') || 'Brak danych'}</p>
+                ${data.customerJourney.MoFu.mainMessage ? `<p><strong>Główny przekaz:</strong> "${data.customerJourney.MoFu.mainMessage}"</p>` : ''}
+              </div>
+              
+              <!-- BoFu -->
+              <div style="padding: 20px; border-left: 4px solid #10b981; background: #ecfdf5;">
+                <h3 style="color: #10b981; margin: 0 0 10px 0;">Bottom of Funnel (BoFu) - Konwersja</h3>
+                <p><strong>Narzędzia:</strong> ${data.customerJourney.BoFu.usedTools.join(', ') || 'Brak danych'}</p>
+                ${data.customerJourney.BoFu.mainMessage ? `<p><strong>Główny przekaz:</strong> "${data.customerJourney.BoFu.mainMessage}"</p>` : ''}
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Demographics -->
+          <tr>
+            <td style="padding: 30px; background: #f9f9f9;">
+              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">Demografia</h2>
+              <p><strong>Główna lokalizacja:</strong> ${data.customerProfile.demographics.mainLocation}</p>
+              <p><strong>Dominująca płeć:</strong> ${data.customerProfile.demographics.dominantGender}</p>
+              <p><strong>Szacowany zasięg UE:</strong> ${data.customerProfile.demographics.totalReachEU.toLocaleString('pl-PL')}</p>
+              <p style="margin-top: 15px; font-style: italic;">${data.customerProfile.demographics.analysis}</p>
+            </td>
+          </tr>
+          
+          <!-- Psychographics -->
+          <tr>
+            <td style="padding: 30px;">
+              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">Psychografia</h2>
+              
+              <h3 style="color: #333; margin: 20px 0 10px 0;">Bóle i problemy:</h3>
+              <ul style="list-style: disc; margin-left: 30px;">
+                ${data.customerProfile.psychographics.painsAndProblems.map(pain => `<li>${pain}</li>`).join('')}
+              </ul>
+              
+              <h3 style="color: #333; margin: 20px 0 10px 0;">Pragnienia i cele:</h3>
+              <ul style="list-style: disc; margin-left: 30px;">
+                ${data.customerProfile.psychographics.desiresAndGoals.map(desire => `<li>${desire}</li>`).join('')}
+              </ul>
+              
+              <p style="margin-top: 20px; padding: 15px; background: #f0f4ff; border-radius: 4px;">
+                <strong>Oferowana transformacja:</strong> ${data.customerProfile.psychographics.offeredTransformation}
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Tactical Playbook -->
+          <tr>
+            <td style="padding: 30px; background: #f9f9f9;">
+              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">Taktyki do Wypróbowania</h2>
+              ${data.tacticalPlaybook.map(play => `
+                <div style="margin-bottom: 15px; padding: 15px; background: white; border-radius: 4px; border-left: 4px solid ${
+                  play.playName === 'adapt' ? '#10b981' : 
+                  play.playName === 'exploit' ? '#3b82f6' : '#eab308'
+                };">
+                  <h3 style="margin: 0 0 10px 0; color: ${
+                    play.playName === 'adapt' ? '#10b981' : 
+                    play.playName === 'exploit' ? '#3b82f6' : '#eab308'
+                  };">
+                    ${play.playName === 'adapt' ? '🚀 Adaptuj' : 
+                      play.playName === 'exploit' ? '💡 Wykorzystaj' : 
+                      '🧪 Testuj'}
+                  </h3>
+                  <p style="margin: 0;">${play.description}</p>
+                </div>
+              `).join('')}
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 30px; background: #f0f0f0; text-align: center; color: #666;">
+              <p style="margin: 0;">Wygenerowano automatycznie przez system analizy konkurencji</p>
+              <p style="margin: 5px 0 0 0; font-size: 12px;">© 2024 Strategic Report Generator</p>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>
+    `;
+    
+    return html;
+  };
+
+  // Function to send email
+  const handleSendEmail = async (values: z.infer<typeof emailSchema>) => {
+    setIsSending(true);
+    
+    try {
+      const emailHTML = generateEmailHTML();
+      
+      const payload = {
+        email: values.email,
+        subject: `Raport Strategiczny - ${data.reportMetadata.analyzedCompanyName}`,
+        htmlContent: emailHTML,
+        metadata: {
+          companyName: data.reportMetadata.analyzedCompanyName,
+          reportDate: data.reportMetadata.analysisDate,
+          timestamp: new Date().toISOString()
+        }
+      };
+      
+      const response = await fetch('https://n8n.akademia.click/webhook-test/83dec58d-c2d4-40ec-b704-7da4ca7c3f59', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Błąd podczas wysyłania');
+      }
+      
+      toast.success(`Raport został wysłany na adres ${values.email}`);
+      setIsEmailDialogOpen(false);
+      form.reset();
+    } catch (error) {
+      console.error('Błąd podczas wysyłania raportu:', error);
+      toast.error('Wystąpił błąd podczas wysyłania raportu');
+    } finally {
+      setIsSending(false);
+    }
+  };
   const handleExportPDF = async () => {
     try {
       // Show loading toast
@@ -267,6 +492,15 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
             >
               <Download className="mr-2 h-4 w-4" />
               Pobierz PDF
+            </Button>
+            <Button
+              onClick={() => setIsEmailDialogOpen(true)}
+              variant="outline"
+              size="sm"
+              className="no-print"
+            >
+              <Mail className="mr-2 h-4 w-4" />
+              Wyślij na email
             </Button>
           </div>
           
@@ -819,6 +1053,60 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
           <p>© 2025 Raport wygenerowany automatycznie</p>
         </div>
       </footer>
+
+      {/* Email Dialog */}
+      <Dialog open={isEmailDialogOpen} onOpenChange={setIsEmailDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Wyślij raport na email</DialogTitle>
+            <DialogDescription>
+              Wprowadź adres email, na który chcesz wysłać raport strategiczny
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleSendEmail)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Adres email</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="twoj@email.pl" 
+                        type="email"
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <DialogFooter>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => setIsEmailDialogOpen(false)}
+                >
+                  Anuluj
+                </Button>
+                <Button type="submit" disabled={isSending}>
+                  {isSending ? (
+                    <>Wysyłanie...</>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />
+                      Wyślij
+                    </>
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
