@@ -65,7 +65,7 @@ function transformApiResponse(apiResponse: any): StrategicReportData {
   if (transformedData.distributionAndFormats?.formatsChartData) {
     const chartData = transformedData.distributionAndFormats.formatsChartData;
     
-    // Check if it's a Chart.js object format (has labels and datasets)
+    // Check if it's a Chart.js object format with datasets
     if (chartData.labels && chartData.datasets) {
       const labels = chartData.labels || [];
       const data = chartData.datasets?.[0]?.data || [];
@@ -75,7 +75,19 @@ function transformApiResponse(apiResponse: any): StrategicReportData {
         label: label,
         value: data[index] || 0
       }));
-    } else if (Array.isArray(chartData)) {
+    } 
+    // Check if it's a simple object with labels and data arrays
+    else if (chartData.labels && chartData.data) {
+      const labels = chartData.labels || [];
+      const data = chartData.data || [];
+      
+      // Convert to array format
+      transformedData.distributionAndFormats.formatsChartData = labels.map((label: string, index: number) => ({
+        label: label,
+        value: data[index] || 0
+      }));
+    }
+    else if (Array.isArray(chartData)) {
       // If it's already an array, just normalize the field names
       transformedData.distributionAndFormats.formatsChartData = chartData.map((item: any) => ({
         label: item.format || item.label,
@@ -88,9 +100,9 @@ function transformApiResponse(apiResponse: any): StrategicReportData {
   if (transformedData.customerJourney) {
     const journey = transformedData.customerJourney;
     transformedData.customerJourney = {
-      ToFu: journey.ToFu || journey.toFu || journey.topOfFunnel || { usedTools: [], mainMessage: null },
-      MoFu: journey.MoFu || journey.moFu || journey.middleOfFunnel || { usedTools: [], mainMessage: null },
-      BoFu: journey.BoFu || journey.boFu || journey.bottomOfFunnel || { usedTools: [], mainMessage: null }
+      ToFu: journey.ToFu || journey.tofu || journey.toFu || journey.topOfFunnel || { usedTools: [], mainMessage: null },
+      MoFu: journey.MoFu || journey.mofu || journey.moFu || journey.middleOfFunnel || { usedTools: [], mainMessage: null },
+      BoFu: journey.BoFu || journey.bofu || journey.boFu || journey.bottomOfFunnel || { usedTools: [], mainMessage: null }
     };
   }
   
