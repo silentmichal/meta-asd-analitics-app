@@ -168,44 +168,222 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
             </td>
           </tr>
           
-          <!-- Demographics -->
+          <!-- Demographics (Kto jest ich klientem) -->
           <tr>
             <td style="padding: 30px; background: #f9f9f9;">
-              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">Demografia</h2>
+              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">Kto jest ich klientem - Demografia</h2>
               <p><strong>Główna lokalizacja:</strong> ${data.customerProfile.demographics.mainLocation}</p>
               <p><strong>Dominująca płeć:</strong> ${data.customerProfile.demographics.dominantGender}</p>
               <p><strong>Szacowany zasięg UE:</strong> ${data.customerProfile.demographics.totalReachEU.toLocaleString('pl-PL')}</p>
-              <p style="margin-top: 15px; font-style: italic;">${data.customerProfile.demographics.analysis}</p>
+              
+              <!-- Age Distribution Table -->
+              <h3 style="margin-top: 20px; color: #333;">Rozkład wieku i płci:</h3>
+              <table width="100%" style="border-collapse: collapse; margin-top: 10px;">
+                <tr style="background: #e5e7eb;">
+                  <th style="padding: 10px; text-align: left; border: 1px solid #d1d5db;">Grupa wiekowa</th>
+                  <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">Udział %</th>
+                </tr>
+                ${data.customerProfile.demographics.chartData.labels.map((label, idx) => `
+                  <tr>
+                    <td style="padding: 10px; border: 1px solid #d1d5db;">${label}</td>
+                    <td style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">
+                      ${Math.round((data.customerProfile.demographics.chartData.datasets[0]?.data[idx] || 0) + 
+                        (data.customerProfile.demographics.chartData.datasets[1]?.data[idx] || 0))}%
+                    </td>
+                  </tr>
+                `).join('')}
+              </table>
+              
+              <p style="margin-top: 15px; font-style: italic; padding: 15px; background: white; border-radius: 4px;">
+                ${data.customerProfile.demographics.analysis}
+              </p>
             </td>
           </tr>
           
           <!-- Psychographics -->
           <tr>
             <td style="padding: 30px;">
-              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">Psychografia</h2>
+              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">Profil Psychograficzny</h2>
               
-              <h3 style="color: #333; margin: 20px 0 10px 0;">Bóle i problemy:</h3>
-              <ul style="list-style: disc; margin-left: 30px;">
-                ${data.customerProfile.psychographics.painsAndProblems.map(pain => `<li>${pain}</li>`).join('')}
+              <h3 style="color: #dc2626; margin: 20px 0 10px 0;">🎯 Bóle i problemy:</h3>
+              <ul style="list-style: none; margin-left: 0;">
+                ${data.customerProfile.psychographics.painsAndProblems.map(pain => 
+                  `<li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">• ${pain}</li>`
+                ).join('')}
               </ul>
               
-              <h3 style="color: #333; margin: 20px 0 10px 0;">Pragnienia i cele:</h3>
-              <ul style="list-style: disc; margin-left: 30px;">
-                ${data.customerProfile.psychographics.desiresAndGoals.map(desire => `<li>${desire}</li>`).join('')}
+              <h3 style="color: #16a34a; margin: 20px 0 10px 0;">✨ Pragnienia i cele:</h3>
+              <ul style="list-style: none; margin-left: 0;">
+                ${data.customerProfile.psychographics.desiresAndGoals.map(desire => 
+                  `<li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">• ${desire}</li>`
+                ).join('')}
               </ul>
               
-              <p style="margin-top: 20px; padding: 15px; background: #f0f4ff; border-radius: 4px;">
-                <strong>Oferowana transformacja:</strong> ${data.customerProfile.psychographics.offeredTransformation}
-              </p>
+              <div style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, #f0f4ff, #e8e0ff); border-radius: 8px;">
+                <h4 style="margin: 0 0 10px 0; color: #667eea;">🚀 Oferowana transformacja:</h4>
+                <p style="margin: 0; font-size: 16px; font-weight: 500;">
+                  ${data.customerProfile.psychographics.offeredTransformation}
+                </p>
+              </div>
             </td>
           </tr>
+          
+          <!-- Messaging Anatomy (Anatomia przekazu reklamowego) -->
+          <tr>
+            <td style="padding: 30px; background: #f9f9f9;">
+              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">Anatomia Przekazu Reklamowego</h2>
+              
+              <!-- Communication -->
+              <div style="margin-bottom: 30px;">
+                <h3 style="color: #333; margin-bottom: 15px;">📢 Komunikacja</h3>
+                <p><strong>Ton głosu:</strong> ${data.messagingAnatomy.communication.toneOfVoice}</p>
+                
+                <div style="margin: 15px 0;">
+                  <strong>Dominujące emocje:</strong>
+                  <div style="margin-top: 10px;">
+                    ${data.messagingAnatomy.communication.dominantEmotions.map(emotion => 
+                      `<span style="display: inline-block; margin: 5px; padding: 5px 12px; background: #667eea; color: white; border-radius: 20px; font-size: 14px;">${emotion}</span>`
+                    ).join('')}
+                  </div>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                  <strong>Kąty sprzedażowe:</strong>
+                  <ul style="list-style: none; margin: 10px 0 0 0; padding: 0;">
+                    ${data.messagingAnatomy.communication.salesAngles.map(angle => 
+                      `<li style="padding: 8px; margin: 5px 0; background: white; border-left: 3px solid #667eea;">📌 ${angle}</li>`
+                    ).join('')}
+                  </ul>
+                </div>
+                
+                <p style="margin-top: 15px; padding: 15px; background: white; border-radius: 4px; font-style: italic;">
+                  ${data.messagingAnatomy.communication.analysis}
+                </p>
+              </div>
+              
+              <!-- Visuals -->
+              <div>
+                <h3 style="color: #333; margin-bottom: 15px;">🎨 Wizualizacja</h3>
+                <p><strong>Dominujący styl:</strong> ${data.messagingAnatomy.visuals.dominantStyle}</p>
+                
+                <div style="margin: 15px 0;">
+                  <strong>Najczęstsze elementy:</strong>
+                  <div style="margin-top: 10px;">
+                    ${data.messagingAnatomy.visuals.commonElements.map(element => 
+                      `<span style="display: inline-block; margin: 5px; padding: 5px 12px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;">🎯 ${element}</span>`
+                    ).join('')}
+                  </div>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                  <strong>Paleta kolorów:</strong>
+                  <table style="margin-top: 10px; border-collapse: collapse;">
+                    <tr>
+                      ${data.messagingAnatomy.visuals.colorPalette.map(color => 
+                        `<td style="padding: 10px; text-align: center;">
+                          <div style="width: 60px; height: 60px; background: ${color.hex}; border-radius: 8px; margin: 0 auto 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></div>
+                          <small style="display: block; font-size: 11px;">${color.name}</small>
+                          <small style="display: block; font-size: 10px; color: #666;">${color.hex}</small>
+                        </td>`
+                      ).join('')}
+                    </tr>
+                  </table>
+                </div>
+                
+                <p style="margin-top: 15px; padding: 15px; background: white; border-radius: 4px; font-style: italic;">
+                  ${data.messagingAnatomy.visuals.analysis}
+                </p>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Distribution and Formats -->
+          <tr>
+            <td style="padding: 30px;">
+              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">Dystrybucja i Formaty</h2>
+              
+              <h3 style="color: #333; margin-bottom: 15px;">📊 Rozkład formatów reklam:</h3>
+              <table width="100%" style="border-collapse: collapse;">
+                <tr style="background: #e5e7eb;">
+                  <th style="padding: 10px; text-align: left; border: 1px solid #d1d5db;">Format</th>
+                  <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">Udział %</th>
+                </tr>
+                ${data.distributionAndFormats.formatsChartData.map(format => `
+                  <tr>
+                    <td style="padding: 10px; border: 1px solid #d1d5db;">
+                      <strong>${format.label}</strong>
+                    </td>
+                    <td style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">
+                      <div style="position: relative; background: #e5e7eb; height: 25px; border-radius: 4px; overflow: hidden;">
+                        <div style="position: absolute; left: 0; top: 0; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); width: ${format.value}%; transition: width 0.3s;"></div>
+                        <span style="position: relative; z-index: 1; line-height: 25px; color: #333; font-weight: bold;">${format.value}%</span>
+                      </div>
+                    </td>
+                  </tr>
+                `).join('')}
+              </table>
+              
+              <div style="margin-top: 20px; padding: 15px; background: #f0f4ff; border-radius: 4px;">
+                <h4 style="margin: 0 0 10px 0; color: #667eea;">📱 Analiza strategii platformowej:</h4>
+                <p style="margin: 0;">
+                  ${data.distributionAndFormats.platformStrategyAnalysis}
+                </p>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Top Hooks Analysis -->
+          ${(data.topHooksAnalysis?.hooks || data.adHooks || []).length > 0 ? `
+          <tr>
+            <td style="padding: 30px; background: #f9f9f9;">
+              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">🎣 Najskuteczniejsze Haki</h2>
+              
+              ${(data.topHooksAnalysis?.hooks || data.adHooks || []).map((hook, idx) => `
+                <div style="margin-bottom: 20px; padding: 20px; background: white; border-radius: 8px; border-left: 4px solid #667eea;">
+                  <h3 style="margin: 0 0 10px 0; color: #333;">Hook #${idx + 1}</h3>
+                  <p style="margin: 10px 0; font-size: 16px; font-style: italic; color: #4b5563;">
+                    "${hook.hookText}"
+                  </p>
+                  <a href="${hook.referenceUrl}" style="color: #667eea; text-decoration: none; font-size: 14px;">
+                    🔗 Zobacz przykład reklamy →
+                  </a>
+                </div>
+              `).join('')}
+            </td>
+          </tr>
+          ` : ''}
+          
+          <!-- Competitive Positioning -->
+          ${(data.competitivePositioning?.opportunities || data.competitiveOpportunities || []).length > 0 ? `
+          <tr>
+            <td style="padding: 30px;">
+              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">🎯 Strategiczne Możliwości</h2>
+              
+              ${(data.competitivePositioning?.opportunities || data.competitiveOpportunities || []).map((opp, idx) => `
+                <div style="margin-bottom: 20px; padding: 20px; background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 8px;">
+                  <h3 style="margin: 0 0 10px 0; color: #92400e;">
+                    ⚠️ Słabość konkurenta #${idx + 1}
+                  </h3>
+                  <p style="margin: 10px 0; color: #451a03;">
+                    <strong>Problem:</strong> ${opp.weakness}
+                  </p>
+                  <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 4px;">
+                    <p style="margin: 0; color: #166534;">
+                      <strong>💡 Nasza rekomendacja:</strong> ${opp.recommendation}
+                    </p>
+                  </div>
+                </div>
+              `).join('')}
+            </td>
+          </tr>
+          ` : ''}
           
           <!-- Tactical Playbook -->
           <tr>
             <td style="padding: 30px; background: #f9f9f9;">
-              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">Taktyki do Wypróbowania</h2>
+              <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">🎮 Taktyki do Wypróbowania</h2>
               ${data.tacticalPlaybook.map(play => `
-                <div style="margin-bottom: 15px; padding: 15px; background: white; border-radius: 4px; border-left: 4px solid ${
+                <div style="margin-bottom: 15px; padding: 20px; background: white; border-radius: 8px; border-left: 4px solid ${
                   play.playName === 'adapt' ? '#10b981' : 
                   play.playName === 'exploit' ? '#3b82f6' : '#eab308'
                 };">
@@ -217,7 +395,7 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
                       play.playName === 'exploit' ? '💡 Wykorzystaj' : 
                       '🧪 Testuj'}
                   </h3>
-                  <p style="margin: 0;">${play.description}</p>
+                  <p style="margin: 0; line-height: 1.6;">${play.description}</p>
                 </div>
               `).join('')}
             </td>
