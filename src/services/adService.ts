@@ -150,7 +150,11 @@ export async function sendReportData(ads: AdData[]): Promise<any> {
     };
 
     const response = await fetch('https://n8n.akademia.click/webhook/33fc2786-8c18-4e93-9365-600bb090ac3d', {
-      method: 'GET'
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
     });
 
     if (!response.ok) {
