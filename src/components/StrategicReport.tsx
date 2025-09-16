@@ -172,31 +172,13 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
           <tr>
             <td style="padding: 30px; background: #f9f9f9;">
               <h2 style="color: #667eea; margin-bottom: 20px; font-size: 24px;">Kto jest ich klientem - Demografia</h2>
-              <p><strong>Główna lokalizacja:</strong> ${data.customerProfile.demographics.mainLocation}</p>
-              <p><strong>Dominująca płeć:</strong> ${data.customerProfile.demographics.dominantGender}</p>
-              <p><strong>Szacowany zasięg UE:</strong> ${data.customerProfile.demographics.totalReachEU.toLocaleString('pl-PL')}</p>
               
-              <!-- Age Distribution Table -->
-              <h3 style="margin-top: 20px; color: #333;">Rozkład wieku i płci:</h3>
-              <table width="100%" style="border-collapse: collapse; margin-top: 10px;">
-                <tr style="background: #e5e7eb;">
-                  <th style="padding: 10px; text-align: left; border: 1px solid #d1d5db;">Grupa wiekowa</th>
-                  <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">Udział %</th>
-                </tr>
-                ${data.customerProfile.demographics.chartData.labels.map((label, idx) => `
-                  <tr>
-                    <td style="padding: 10px; border: 1px solid #d1d5db;">${label}</td>
-                    <td style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">
-                      ${Math.round((data.customerProfile.demographics.chartData.datasets[0]?.data[idx] || 0) + 
-                        (data.customerProfile.demographics.chartData.datasets[1]?.data[idx] || 0))}%
-                    </td>
-                  </tr>
-                `).join('')}
-              </table>
-              
-              <p style="margin-top: 15px; font-style: italic; padding: 15px; background: white; border-radius: 4px;">
-                ${data.customerProfile.demographics.analysis}
-              </p>
+              <div style="margin-top: 15px; padding: 20px; background: linear-gradient(135deg, #e0e7ff, #f3e8ff); border-left: 4px solid #667eea; border-radius: 4px;">
+                <h3 style="margin: 0 0 10px 0; color: #4c1d95;">Wniosek analityczny:</h3>
+                <p style="margin: 0; color: #374151; font-size: 15px; line-height: 1.6;">
+                  ${data.customerProfile.demographics.analysis}
+                </p>
+              </div>
             </td>
           </tr>
           
