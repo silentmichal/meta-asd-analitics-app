@@ -19,47 +19,47 @@ function parseAdData(item: any): AdData | null {
     // Decode main text fields
     if (adData.body) adData.body = decodeHtmlEntities(adData.body);
     if (adData.title) adData.title = decodeHtmlEntities(adData.title);
-    if (adData.linkDescription) adData.linkDescription = decodeHtmlEntities(adData.linkDescription); // NEW
-    if (adData.caption) adData.caption = decodeHtmlEntities(adData.caption); // NEW - for DPA
+    if (adData.linkDescription) adData.linkDescription = decodeHtmlEntities(adData.linkDescription);
+    if (adData.caption) adData.caption = decodeHtmlEntities(adData.caption);
 
-  // Decode cards
-  if (adData.cards && Array.isArray(adData.cards)) {
-    adData.cards = adData.cards.map((card: any) => ({
-      ...card,
-      title: decodeHtmlEntities(card.title),
-      body: decodeHtmlEntities(card.body),
-      linkDescription: card.linkDescription ? decodeHtmlEntities(card.linkDescription) : card.linkDescription, // NEW
-      caption: card.caption ? decodeHtmlEntities(card.caption) : card.caption // NEW - for DPA
-    }));
-  }
+    // Decode cards
+    if (adData.cards && Array.isArray(adData.cards)) {
+      adData.cards = adData.cards.map((card: any) => ({
+        ...card,
+        title: decodeHtmlEntities(card.title),
+        body: decodeHtmlEntities(card.body),
+        linkDescription: card.linkDescription ? decodeHtmlEntities(card.linkDescription) : card.linkDescription,
+        caption: card.caption ? decodeHtmlEntities(card.caption) : card.caption
+      }));
+    }
 
-  // Convert MULTI_IMAGE images to cards format
-  if (adInfo.adType === 'MULTI_IMAGE' && adData.images && Array.isArray(adData.images)) {
-    adData.cards = adData.images.map((image: any) => ({
-      title: adData.title || '',
-      body: null,
-      imageUrl: image.resized_url || image.original_url,
-      linkUrl: adData.linkUrl || '',
-      ctaText: adData.ctaText || '',
-      linkDescription: adData.linkDescription || null
-    }));
-  }
+    // Convert MULTI_IMAGE images to cards format
+    if (adInfo.adType === 'MULTI_IMAGE' && adData.images && Array.isArray(adData.images)) {
+      adData.cards = adData.images.map((image: any) => ({
+        title: adData.title || '',
+        body: null,
+        imageUrl: image.resized_url || image.original_url,
+        linkUrl: adData.linkUrl || '',
+        ctaText: adData.ctaText || '',
+        linkDescription: adData.linkDescription || null
+      }));
+    }
 
-  // Convert VIDEO format from API to expected format
-  if (adInfo.adType === 'VIDEO' && adData.video) {
-    adData.videoUrls = {
-      hd: adData.video.hd_url,
-      sd: adData.video.sd_url
+    // Convert VIDEO format from API to expected format
+    if (adInfo.adType === 'VIDEO' && adData.video) {
+      adData.videoUrls = {
+        hd: adData.video.hd_url,
+        sd: adData.video.sd_url
+      };
+      adData.previewImageUrl = adData.video.preview_image_url || null;
+    }
+
+    return {
+      success: adInfo.success,
+      adType: adInfo.adType,
+      adData,
+      basic: item.basic
     };
-    adData.previewImageUrl = adData.video.preview_image_url || null;
-  }
-
-  return {
-    success: adInfo.success,
-    adType: adInfo.adType,
-    adData,
-    basic: item.basic // NEW - pass through basic field with platform and date info
-  };
   } catch (error) {
     console.error('Error parsing ad data:', error);
     return null;
@@ -69,6 +69,11 @@ function parseAdData(item: any): AdData | null {
 // Fetch ads from API
 export async function fetchAds(filters: AdFilters): Promise<AdData[]> {
   try {
+    const webhookUrl = import.meta.env.VITE_FETCH_ADS_WEBHOOK_URL;
+    if (!webhookUrl) {
+      throw new Error("VITE_FETCH_ADS_WEBHOOK_URL is not defined in environment variables.");
+    }
+
     // Build query parameters
     const params = new URLSearchParams();
     params.append('id', filters.pageId);
@@ -85,9 +90,7 @@ export async function fetchAds(filters: AdFilters): Promise<AdData[]> {
       params.append('dateTo', filters.dateTo);
     }
     
-    const response = await fetch(
-      `https://n8n.akademia.click/webhook/f319c524-6a23-4f7d-b4e4-25741eb39063?${params.toString()}`
-    );
+    const response = await fetch(`${webhookUrl}?${params.toString()}`);
     if (!response.ok) throw new Error(`Failed to fetch ads: ${response.status}`);
 
     const data = await response.json();
@@ -133,6 +136,11 @@ export function extractDomain(url: string): string {
 // Send report data to the API and return response
 export async function sendReportData(ads: AdData[]): Promise<any> {
   try {
+    const webhookUrl = import.meta.env.VITE_SEND_REPORT_WEBHOOK_URL;
+    if (!webhookUrl) {
+      throw new Error("VITE_SEND_REPORT_WEBHOOK_URL is not defined in environment variables.");
+    }
+
     const { countAdVariants } = await import('@/utils/adUtils');
     const pageName = ads[0]?.adData?.pageName || 'Unknown';
     const pageId = ads[0]?.basic?.page_id || '';
@@ -148,7 +156,7 @@ export async function sendReportData(ads: AdData[]): Promise<any> {
       }
     };
 
-    const response = await fetch('https://n8n.akademia.click/webhook/33fc2786-8c18-4e93-9365-600bb090ac3d', {
+    const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
