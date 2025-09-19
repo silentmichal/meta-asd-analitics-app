@@ -401,43 +401,54 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
   // Function to send email
   const handleSendEmail = async (values: z.infer<typeof emailSchema>) => {
   setIsSending(true);
+
+  // NOWY KOD: Pobranie URL ze zmiennej środowiskowej
+  const webhookUrl = import.meta.env.VITE_SEND_EMAIL_WEBHOOK_URL;
+
+  // NOWY KOD: Zabezpieczenie na wypadek braku zmiennej
+  if (!webhookUrl) {
+    toast.error('Błąd konfiguracji: Brak adresu URL do wysyłki maili.');
+    setIsSending(false);
+    return; // Przerwij funkcję, jeśli URL nie jest skonfigurowany
+  }
   
-    try {
-      const emailHTML = generateEmailHTML();
-      
-      const payload = {
-        email: values.email,
-        subject: `Raport Strategiczny - ${data.reportMetadata.analyzedCompanyName}`,
-        htmlContent: emailHTML,
-        metadata: {
-          companyName: data.reportMetadata.analyzedCompanyName,
-          reportDate: data.reportMetadata.analysisDate,
-          timestamp: new Date().toISOString()
-        }
-      };
-      
-      const response = await fetch('https://n8n.akademia.click/webhook/83dec58d-c2d4-40ec-b704-7da4ca7c3f59', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload)
-      });
-      
-      if (!response.ok) {
-        throw new Error('Błąd podczas wysyłania');
+  try {
+    const emailHTML = generateEmailHTML();
+    
+    const payload = {
+      email: values.email,
+      subject: `Raport Strategiczny - ${data.reportMetadata.analyzedCompanyName}`,
+      htmlContent: emailHTML,
+      metadata: {
+        companyName: data.reportMetadata.analyzedCompanyName,
+        reportDate: data.reportMetadata.analysisDate,
+        timestamp: new Date().toISOString()
       }
-      
-      toast.success(`Raport został wysłany na adres ${values.email}`);
-      setIsEmailDialogOpen(false);
-      form.reset();
-    } catch (error) {
-      console.error('Błąd podczas wysyłania raportu:', error);
-      toast.error('Wystąpił błąd podczas wysyłania raportu');
-    } finally {
-      setIsSending(false);
+    };
+    
+    // ZMIANA: Użycie zmiennej `webhookUrl` zamiast stałego adresu
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    if (!response.ok) {
+      throw new Error('Błąd podczas wysyłania');
     }
-  };
+    
+    toast.success(`Raport został wysłany na adres ${values.email}`);
+    setIsEmailDialogOpen(false);
+    form.reset();
+  } catch (error) {
+    console.error('Błąd podczas wysyłania raportu:', error);
+    toast.error('Wystąpił błąd podczas wysyłania raportu');
+  } finally {
+    setIsSending(false);
+  }
+};
   const handleExportPDF = async () => {
     try {
       // Show loading toast
