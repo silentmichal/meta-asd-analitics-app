@@ -400,8 +400,8 @@ const StrategicReport = ({ data, onBack }: StrategicReportProps) => {
 
   // Function to send email
   const handleSendEmail = async (values: z.infer<typeof emailSchema>) => {
-    setIsSending(true);
-    
+  setIsSending(true);
+  
     try {
       const emailHTML = generateEmailHTML();
       
