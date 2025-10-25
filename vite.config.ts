@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => ({
   preview: {
     host: true, // Pozwala na dostęp z zewnątrz kontenera (działa jak --host 0.0.0.0)
     port: 3000, // Port zgodny z ustawieniami w Coolify
-    allowedHosts: ["meta-ads-analytics-app.akademia.click"], // Twoja domena
+    allowedHosts: ["meta-analityka.trocheprosciej.site"], // Twoja domena
   },
   // 👆 KONIEC NOWEGO FRAGMENTU
   plugins: [
